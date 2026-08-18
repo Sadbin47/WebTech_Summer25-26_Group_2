@@ -1,22 +1,5 @@
 <?php
 session_start();
-
-/*
- * Customer Dashboard
- * View/customer_dashboard.php
- *
- * This file is responsible for displaying:
- * 1. Product grid
- * 2. Shopping cart
- * 3. Checkout form
- * 4. Order history
- *
- * Data can later be connected to the Controller/Model.
- */
-
-// Sample data for displaying the UI.
-// Replace these with Controller/Model data when connected.
-
 $products = [
     [
         'id' => 1,
@@ -311,7 +294,7 @@ foreach ($cart as $item) {
 
 <div class="container">
 
-    <!-- ================= PRODUCTS ================= -->
+    <!--product-->
 
     <div class="section">
 
@@ -381,7 +364,7 @@ foreach ($cart as $item) {
     </div>
 
 
-    <!-- ================= CART ================= -->
+    <!--CART-->
 
     <div class="section">
 
@@ -453,7 +436,7 @@ foreach ($cart as $item) {
     </div>
 
 
-    <!-- ================= CHECKOUT ================= -->
+    <!--CHECKOUT-->
 
     <div class="section">
 
@@ -583,7 +566,7 @@ foreach ($cart as $item) {
     </div>
 
 
-    <!-- ================= ORDER HISTORY ================= -->
+    <!--ORDER HISTORY-->
 
     <div class="section">
 
