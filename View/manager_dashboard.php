@@ -1,6 +1,6 @@
 
 <?php
-// Manager Dashboard - keeping the jerseys under control!
+// Manager Dashboard 
 ?>
 
 <!DOCTYPE html>
