@@ -19,8 +19,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'register') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $confirmPassword = $_POST['confirm_password'] ?? '';
-    $role = $_POST['role'] ?? 'Customer';
-    $roles = ['Customer', 'Salesman', 'Manager'];
+    $role = 'Customer';
 
     if (strlen($name) < 2 || strlen($username) < 3 || strlen($password) < 5) {
         $_SESSION['register_error'] = 'Please provide valid registration information.';
@@ -28,8 +27,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $action === 'register') {
         exit;
     }
 
-    if ($password !== $confirmPassword || !in_array($role, $roles, true)) {
-        $_SESSION['register_error'] = 'Passwords must match and the role must be valid.';
+    if ($password !== $confirmPassword) {
+        $_SESSION['register_error'] = 'Passwords must match.';
         header('Location: ../View/register.php');
         exit;
     }
@@ -72,12 +71,6 @@ if (!$user || !password_verify($password, $user['password'])) {
     exit;
 }
 
-if ($user['role'] !== 'Admin') {
-    $_SESSION['login_error'] = 'Admin access only.';
-    header('Location: ../View/login.php');
-    exit;
-}
-
 session_regenerate_id(true);
 $_SESSION['user_id'] = $user['id'];
 $_SESSION['name'] = $user['name'];
@@ -90,5 +83,12 @@ if (isset($_POST['remember'])) {
     setcookie('remember_user', '', time() - 3600, '/');
 }
 
-header('Location: ../View/admin_dashboard.php');
+$dashboardByRole = [
+    'Admin' => '../View/admin_dashboard.php',
+    'Manager' => '../View/manager_dashboard.php',
+    'Salesman' => '../View/salesman_dashboard.php',
+    'Customer' => '../View/customer_dashboard.php'
+];
+
+header('Location: ' . ($dashboardByRole[$user['role']] ?? '../View/login.php'));
 exit;

@@ -56,16 +56,6 @@ function collect_data() {
             <td><input type="password" id="confirm_password" name="confirm_password" required></td>
         </tr>
         <tr>
-            <td><label for="role">Role:</label></td>
-            <td>
-                <select name="role" id="role" required>
-                    <option value="Customer">Customer</option>
-                    <option value="Salesman">Salesman</option>
-                    <option value="Manager">Manager</option>
-                </select>
-            </td>
-        </tr>
-        <tr>
             <td colspan="2"> 
                 <input type="submit" id="submit" name="submit" value="Register">
                 <input type="reset" id="reset" name="reset">

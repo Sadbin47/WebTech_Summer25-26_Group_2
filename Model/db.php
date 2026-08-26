@@ -28,6 +28,7 @@ class Database
 
             $this->createUsersTable($connection);
             $this->createSettingsTable($connection);
+            $this->createOrdersTable($connection);
             $this->createDefaultAdmin($connection);
 
             return $connection;
@@ -108,5 +109,18 @@ class Database
              VALUES (1, 5.00, :shipping_zone)'
         );
         $statement->execute(['shipping_zone' => 'Inside Dhaka']);
+    }
+
+    private function createOrdersTable(PDO $connection): void
+    {
+        $connection->exec(
+            "CREATE TABLE IF NOT EXISTS orders (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                customer_id INT NULL,
+                total_amount DECIMAL(10,2) NOT NULL DEFAULT 0.00,
+                status VARCHAR(20) NOT NULL DEFAULT 'Processing',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            )"
+        );
     }
 }
