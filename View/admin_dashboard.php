@@ -14,6 +14,7 @@ require_once __DIR__ . '/../Model/UserModel.php';
 $userModel = new UserModel((new Database())->connect());
 $users = $userModel->getAllUsers();
 $settings = $userModel->getSettings();
+$revenue = $userModel->getRevenueSummary();
 $admin = $userModel->findById((int) $_SESSION['user_id']);
 $adminName = htmlspecialchars($_SESSION['name'] ?? 'Admin');
 $section = $_GET['section'] ?? 'dashboard';
@@ -96,12 +97,12 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
             <div class="stats">
                 <div class="stat"><span>Registered Users</span><strong><?php echo count($users); ?></strong></div>
                 <div class="stat"><span>Admin Account</span><strong>Active</strong></div>
-                <div class="stat"><span>Revenue This Month</span><strong>BDT 88K</strong></div>
+                <div class="stat"><span>Revenue This Month</span><strong>BDT <?php echo number_format((float) $revenue['monthly_revenue'], 0); ?></strong></div>
             </div>
             <div class="quick-links">
                 <a class="quick-link" href="admin_dashboard.php?section=users"><strong>Manage Users</strong><span>View, add, change roles, or delete registered users.</span></a>
                 <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Settings & Account</strong><span>Edit your profile, password, and system settings.</span></a>
-                <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Revenue</strong><span>Current global revenue: BDT 88,000.</span></a>
+                <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Revenue</strong><span><?php echo (int) $revenue['order_count']; ?> orders recorded. Total: BDT <?php echo number_format((float) $revenue['total_revenue'], 0); ?>.</span></a>
             </div>
 
         <?php elseif ($section === 'users'): ?>

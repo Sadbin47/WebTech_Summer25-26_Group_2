@@ -109,4 +109,25 @@ class UserModel
             'shipping_zone' => $shippingZone
         ]);
     }
+
+    public function getRevenueSummary(): array
+    {
+        $statement = $this->connection->query(
+            "SELECT
+                COUNT(*) AS order_count,
+                COALESCE(SUM(CASE WHEN status <> 'Cancelled' THEN total_amount ELSE 0 END), 0) AS total_revenue,
+                COALESCE(SUM(CASE
+                    WHEN status <> 'Cancelled'
+                    AND YEAR(created_at) = YEAR(CURRENT_DATE())
+                    AND MONTH(created_at) = MONTH(CURRENT_DATE())
+                    THEN total_amount ELSE 0 END), 0) AS monthly_revenue
+             FROM orders"
+        );
+
+        return $statement->fetch() ?: [
+            'order_count' => 0,
+            'total_revenue' => 0,
+            'monthly_revenue' => 0
+        ];
+    }
 }
