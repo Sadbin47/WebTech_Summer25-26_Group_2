@@ -1,3 +1,17 @@
+<?php
+session_start();
+
+if (($_SESSION['role'] ?? '') === 'Admin') {
+    header('Location: admin_dashboard.php');
+    exit;
+}
+
+$loginError = $_SESSION['login_error'] ?? '';
+$loginMessage = $_SESSION['login_message'] ?? '';
+unset($_SESSION['login_error'], $_SESSION['login_message']);
+$rememberedUser = htmlspecialchars($_COOKIE['remember_user'] ?? '');
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head> 
@@ -5,10 +19,10 @@
     <title>JerseyTrack: Jersey Inventory & Sales Platform</title>
 <script>
 function collect_data() {
-    let e = document.getElementById("email").value.trim();
+    let u = document.getElementById("username").value.trim();
     let p = document.getElementById("password").value.trim();
     let msg = "";
-    if(e.length < 5) msg += "Email must be 5 char\n";
+    if(u.length < 3) msg += "Username must be at least 3 characters\n";
     if(p.length < 5) msg += "Password must be 5 char\n";
     if(msg) { alert(msg); return false; }
     return true;
@@ -16,13 +30,26 @@ function collect_data() {
 </script>
 </head>
 <body>
+<?php include 'header.php'; ?>
 <h2>System Login</h2>
+<?php if ($loginError !== ''): ?>
+    <p style="color: white; background: #b94747; padding: 8px 12px;">
+        <?php echo htmlspecialchars($loginError); ?>
+    </p>
+<?php endif; ?>
+<?php if ($loginMessage !== ''): ?>
+    <p style="color: white; background: #28795c; padding: 8px 12px;">
+        <?php echo htmlspecialchars($loginMessage); ?>
+    </p>
+<?php endif; ?>
 <form method="POST" action="../Controller/AuthController.php" onsubmit="return collect_data()">
     <input type="hidden" name="action" value="login">
     <table> 
         <tr>
-            <td><label for="email">Email:</label></td> 
-            <td><input type="email" id="email" name="email" placeholder="Enter Email" required></td>
+            <td><label for="username">Username:</label></td>
+            <td>
+                <input type="text" id="username" name="username" value="<?php echo $rememberedUser; ?>" required>
+            </td>
         </tr>
         <tr>
             <td><label for="password">Password:</label></td>
