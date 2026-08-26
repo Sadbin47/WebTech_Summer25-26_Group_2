@@ -1,3 +1,12 @@
+<?php
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+$registerError = $_SESSION['register_error'] ?? '';
+unset($_SESSION['register_error']);
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -6,12 +15,12 @@
 <script>
 function collect_data() {
     let n = document.getElementById("name").value.trim();
-    let e = document.getElementById("email").value.trim();
+    let u = document.getElementById("username").value.trim();
     let p = document.getElementById("password").value.trim();
     let cp = document.getElementById("confirm_password").value.trim();
     let msg = "";
     if(n.length < 5) msg += "Name must be 5 char\n";
-    if(e.length < 5) msg += "Email must be 5 char\n";
+    if(u.length < 3) msg += "Username must be 3 char\n";
     if(p.length < 5) msg += "Password must be 5 char\n";
     if(p !== cp) msg += "Passwords must match\n";
     if(msg) { alert(msg); return false; }
@@ -20,7 +29,13 @@ function collect_data() {
 </script>
 </head>
 <body>
+<?php include 'header.php'; ?>
 <h2>User Registration</h2>
+<?php if ($registerError !== ''): ?>
+    <p style="color: white; background: #b94747; padding: 8px 12px;">
+        <?php echo htmlspecialchars($registerError); ?>
+    </p>
+<?php endif; ?>
 <form enctype="multipart/form-data" method="POST" action="../Controller/AuthController.php" onsubmit="return collect_data()">
     <input type="hidden" name="action" value="register">
     <table> 
@@ -29,8 +44,8 @@ function collect_data() {
             <td><input type="text" id="name" name="name" placeholder="Enter Full Name" required></td>
         </tr>
         <tr>
-            <td><label for="email">Email:</label></td> 
-            <td><input type="email" id="email" name="email" placeholder="Enter Email" required></td>
+            <td><label for="username">Username:</label></td>
+            <td><input type="text" id="username" name="username" placeholder="Enter Username" required></td>
         </tr>
         <tr>
             <td><label for="password">Password:</label></td>
@@ -47,18 +62,7 @@ function collect_data() {
                     <option value="Customer">Customer</option>
                     <option value="Salesman">Salesman</option>
                     <option value="Manager">Manager</option>
-                    <option value="Admin">Admin</option>
                 </select>
-            </td>
-        </tr>
-        <tr>
-            <td><label for="file">Profile Image:</label></td>
-            <td><input type="file" id="file" name="file"></td>
-        </tr>
-        <tr>
-            <td colspan="2">
-                <input type="checkbox" id="rememberuser" name="rememberuser" value="1">
-                <label for="rememberuser">Remember Me</label>
             </td>
         </tr>
         <tr>
