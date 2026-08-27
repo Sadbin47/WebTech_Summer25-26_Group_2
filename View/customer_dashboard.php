@@ -79,27 +79,6 @@ foreach ($cart as $item) {
             color: #333;
         }
 
-        header {
-            background: #222;
-            color: white;
-            padding: 20px 40px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        header h1 {
-            font-size: 24px;
-        }
-
-        .logout {
-            color: white;
-            text-decoration: none;
-            background: #dc3545;
-            padding: 8px 15px;
-            border-radius: 5px;
-        }
-
         .container {
             width: 90%;
             max-width: 1200px;
@@ -262,10 +241,6 @@ foreach ($cart as $item) {
         }
 
         @media (max-width: 600px) {
-            header {
-                padding: 15px;
-            }
-
             .container {
                 width: 95%;
             }
@@ -284,19 +259,13 @@ foreach ($cart as $item) {
 
 <body>
 
-<header>
-
-    <h1>Customer Dashboard</h1>
-
-    <a href="#" class="logout">Logout</a>
-
-</header>
+<?php include 'header.php'; ?>
 
 <div class="container">
 
     <!--product-->
 
-    <div class="section">
+    <div class="section" id="products">
 
         <h2>Available Products</h2>
 
@@ -366,7 +335,7 @@ foreach ($cart as $item) {
 
     <!--CART-->
 
-    <div class="section">
+    <div class="section" id="cart">
 
         <h2>Shopping Cart</h2>
 
@@ -438,7 +407,7 @@ foreach ($cart as $item) {
 
     <!--CHECKOUT-->
 
-    <div class="section">
+    <div class="section" id="checkout">
 
         <h2>Checkout</h2>
 
@@ -568,7 +537,7 @@ foreach ($cart as $item) {
 
     <!--ORDER HISTORY-->
 
-    <div class="section">
+    <div class="section" id="orders">
 
         <h2>Order History</h2>
 
