@@ -16,9 +16,10 @@ if ($headerRole === 'Admin') {
 } elseif ($headerRole === 'Manager') {
     $homePage = 'manager_dashboard.php';
     $menu = [
-        'Dashboard' => 'manager_dashboard.php#dashboard',
-        'Inventory' => 'manager_dashboard.php#inventory',
-        'Reports' => 'manager_dashboard.php#reports'
+        'Dashboard' => 'manager_dashboard.php',
+        ' Employees' => 'manage_employees.php',
+        'Product' => 'manage_product.php',
+        'My Information' => 'update_manager.php'
     ];
 } elseif ($headerRole === 'Salesman') {
     $homePage = 'salesman_dashboard.php';
@@ -42,6 +43,13 @@ if ($headerRole === 'Admin') {
 
 <style>
     .app-header {
+        position: fixed;
+        top: 0;
+        right: 0;
+        left: 0;
+        z-index: 1000;
+        height: 62px;
+        padding: 0 22px;
         background: #252b33;
         color: white;
         font-family: Arial, sans-serif;
@@ -49,30 +57,36 @@ if ($headerRole === 'Admin') {
 
     .app-header-content {
         display: flex;
+        max-width: 1200px;
+        height: 100%;
+        margin: auto;
         align-items: center;
-        width: 1000px;
-        height: 60px;
-        margin: 0 auto;
+        gap: 24px;
     }
 
     .app-header a {
+        margin: 0;
         color: #e6e9ec;
+        font-weight: normal;
         text-decoration: none;
     }
 
     .app-brand {
         font-size: 18px;
-        font-weight: bold;
+        font-weight: bold !important;
+        white-space: nowrap;
     }
 
     .app-menu {
         display: flex;
         flex: 1;
-        margin-left: 25px;
+        gap: 4px;
+        overflow-x: auto;
     }
 
     .app-menu a {
-        padding: 10px;
+        padding: 9px 10px;
+        white-space: nowrap;
     }
 
     .app-menu a:hover {
@@ -81,14 +95,15 @@ if ($headerRole === 'Admin') {
     }
 
     .app-menu a.active {
-        background: #8b1c1c;
+        background: #28795c;
         color: white;
     }
 
     .app-user {
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 12px;
+        white-space: nowrap;
     }
 
     .app-role {
@@ -98,8 +113,32 @@ if ($headerRole === 'Admin') {
 
     .app-logout {
         padding: 7px 10px;
-        background: #850000;
-        color: white;
+        background: #b94747;
+        color: white !important;
+    }
+
+    .app-header-space {
+        width: 100%;
+        height: 62px;
+        flex-shrink: 0;
+    }
+
+    [id] {
+        scroll-margin-top: 75px;
+    }
+
+    @media (max-width: 650px) {
+        .app-header {
+            padding: 0 10px;
+        }
+
+        .app-header-content {
+            gap: 8px;
+        }
+
+        .app-user-name {
+            display: none;
+        }
     }
 </style>
 
@@ -130,3 +169,5 @@ if ($headerRole === 'Admin') {
         <?php endif; ?>
     </div>
 </header>
+
+<div class="app-header-space" aria-hidden="true"></div>

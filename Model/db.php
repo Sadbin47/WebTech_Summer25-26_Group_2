@@ -36,7 +36,9 @@ class Database
             $this->createJerseysTable($connection);
             $this->createOrderItemsTable($connection);
             $this->createPromoCodesTable($connection);
+            $this->createRestockRequestsTable($connection);
             $this->createDefaultAdmin($connection);
+            $this->createDefaultManager($connection);
 
             // Demo data so the Salesman POS can be tested before Manager module is ready.
             $this->seedDemoJerseys($connection);
@@ -104,6 +106,53 @@ class Database
             'meta_value' => '1'
         ]);
     }
+  
+private function createDefaultManager(PDO $connection): void
+{
+    $seedCheck = $connection->prepare(
+        'SELECT meta_value FROM app_meta WHERE meta_key = :meta_key'
+    );
+
+    $seedCheck->execute([
+        'meta_key' => 'manager_seeded'
+    ]);
+
+    if ($seedCheck->fetch()) {
+        return;
+    }
+
+    $check = $connection->prepare(
+        'SELECT id FROM users WHERE username = :username'
+    );
+
+    $check->execute([
+        'username' => 'manager'
+    ]);
+
+    if (!$check->fetch()) {
+        $insert = $connection->prepare(
+            'INSERT INTO users (name, username, password, role)
+             VALUES (:name, :username, :password, :role)'
+        );
+
+        $insert->execute([
+            'name' => 'Manager',
+            'username' => 'manager',
+            'password' => password_hash('manager', PASSWORD_DEFAULT),
+            'role' => 'Manager'
+        ]);
+    }
+
+    $markSeeded = $connection->prepare(
+        'INSERT INTO app_meta (meta_key, meta_value)
+         VALUES (:meta_key, :meta_value)'
+    );
+
+    $markSeeded->execute([
+        'meta_key' => 'manager_seeded',
+        'meta_value' => '1'
+    ]);
+}
 
     private function createSettingsTable(PDO $connection): void
     {
@@ -216,6 +265,24 @@ class Database
             )"
         );
     }
+
+    private function createRestockRequestsTable(PDO $connection): void
+    {
+        $connection->exec(
+            "CREATE TABLE IF NOT EXISTS restock_requests (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                salesman_id INT NOT NULL,
+                jersey_id INT NOT NULL,
+                requested_quantity INT NOT NULL,
+                reason VARCHAR(255) NULL,
+                status VARCHAR(20) NOT NULL DEFAULT 'Pending',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+                INDEX (salesman_id),
+                INDEX (jersey_id)
+            )"
+        );
+    }
+
     private function seedDemoJerseys(PDO $connection): void
     {
         $count = (int) $connection->query('SELECT COUNT(*) FROM jerseys')->fetchColumn();
@@ -276,3 +343,4 @@ class Database
         }
     }
 }
+
