@@ -81,7 +81,7 @@ if ($headerRole === 'Admin') {
     }
 
     .app-menu a.active {
-        background: #28795c;
+        background: #8b1c1c;
         color: white;
     }
 
@@ -98,7 +98,7 @@ if ($headerRole === 'Admin') {
 
     .app-logout {
         padding: 7px 10px;
-        background: #b94747;
+        background: #850000;
         color: white;
     }
 </style>
