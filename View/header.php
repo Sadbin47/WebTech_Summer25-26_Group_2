@@ -16,9 +16,10 @@ if ($headerRole === 'Admin') {
 } elseif ($headerRole === 'Manager') {
     $homePage = 'manager_dashboard.php';
     $menu = [
-        'Dashboard' => 'manager_dashboard.php#dashboard',
-        'Inventory' => 'manager_dashboard.php#inventory',
-        'Reports' => 'manager_dashboard.php#reports'
+        'Dashboard' => 'manager_dashboard.php',
+        ' Employees' => 'manage_employees.php',
+        'Product' => 'manage_product.php',
+        'My Information' => 'update_manager.php'
     ];
 } elseif ($headerRole === 'Salesman') {
     $homePage = 'salesman_dashboard.php';

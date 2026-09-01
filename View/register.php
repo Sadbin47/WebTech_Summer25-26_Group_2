@@ -32,7 +32,7 @@ function collect_data() {
 <?php include 'header.php'; ?>
 <h2>User Registration</h2>
 <?php if ($registerError !== ''): ?>
-    <p style="color: white; background: #b94747; padding: 8px 12px;">
+    <p class="message error">
         <?php echo htmlspecialchars($registerError); ?>
     </p>
 <?php endif; ?>

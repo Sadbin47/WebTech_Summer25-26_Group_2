@@ -32,55 +32,126 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
     <style>
         * { box-sizing: border-box; }
-        body { margin: 0; background: #f4f7f6; color: #24322d; font-family: Arial, sans-serif; }
-        .main { width: 94%; max-width: 1100px; margin: auto; padding: 28px 0; }
-        .welcome, .panel, .stat { border: 1px solid #dbe5e0; border-radius: 10px; background: #fff; box-shadow: 0 3px 12px rgba(27, 65, 48, .06); }
-        .welcome { display: flex; align-items: center; justify-content: space-between; gap: 18px; margin-bottom: 20px; padding: 25px; background: #245a45; color: white; }
-        .welcome h1 { margin: 0 0 6px; font-size: 27px; }
-        .welcome p { margin: 0; color: #d9eee4; }
-        .welcome-badge { font-size: 35px; }
-        .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .stat { padding: 20px; }
-        .stat span { color: #687a71; font-size: 13px; }
-        .stat strong { display: block; margin-top: 8px; color: #245a45; font-size: 27px; }
-        .quick-links { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
-        .quick-link { display: block; padding: 24px; border-radius: 10px; background: #fff; color: #245a45; text-decoration: none; box-shadow: 0 3px 12px rgba(27, 65, 48, .06); }
-        .quick-link:hover { background: #e9f4ef; }
-        .quick-link strong { display: block; margin-bottom: 8px; font-size: 17px; }
-        .quick-link span { color: #687a71; font-size: 13px; }
-        .panel { padding: 24px; }
-        .panel h2 { margin: 0 0 18px; color: #245a45; font-size: 20px; }
-        .panel h3 { margin: 0 0 10px; font-size: 16px; }
-        .message { margin-bottom: 18px; padding: 11px 14px; border-radius: 6px; background: #dff3e8; color: #17633f; }
-        .message.error { background: #f8dddd; color: #8c3030; }
-        .user { display: flex; align-items: center; justify-content: space-between; gap: 15px; margin-bottom: 10px; padding: 13px; border: 1px solid #dbe5e0; border-radius: 7px; }
-        .user small { color: #687a71; }
-        .user-actions { display: flex; align-items: center; gap: 7px; }
-        .user-actions form { display: flex; align-items: center; gap: 6px; }
-        form { margin: 0; }
-        label { display: block; margin: 11px 0 5px; font-size: 13px; font-weight: bold; }
-        input, select { width: 100%; padding: 9px; border: 1px solid #bdcec5; border-radius: 5px; background: #fff; }
-        .user-actions select { width: auto; }
-        button { display: inline-block; margin-top: 10px; padding: 9px 13px; border: 0; border-radius: 5px; background: #28795c; color: #fff; cursor: pointer; }
-        button:hover { background: #1d6248; }
-        .user-actions button { margin-top: 0; }
-        .danger { background: #b94747; }
-        .danger:hover { background: #913737; }
-        .add-user, .settings-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
-        .add-user { margin-top: 22px; padding-top: 20px; border-top: 1px solid #dbe5e0; }
-        .sub-panel { padding: 18px; border: 1px solid #dbe5e0; border-radius: 7px; background: #fbfdfc; }
-        .profile-info { margin-bottom: 14px; line-height: 1.8; color: #4c6157; }
 
-        @media (max-width: 700px) {
-            .welcome { align-items: flex-start; flex-direction: column; }
-            .stats, .quick-links, .add-user, .settings-grid { grid-template-columns: 1fr; }
-            .user { align-items: flex-start; flex-direction: column; }
-            .user-actions { width: 100%; flex-wrap: wrap; }
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+            color: #333333;
         }
+
+        .main {
+            width: 920px;
+            margin: 25px auto;
+        }
+
+        .welcome {
+            margin-bottom: 20px;
+            padding: 20px;
+            border-bottom: 5px solid #e5a0aa;
+            background: #8b1e2d;
+            color: #ffffff;
+        }
+
+        .welcome h1 { margin: 0 0 8px; }
+        .welcome p { margin: 0; color: #f8dce1; }
+
+        .stats { margin-bottom: 20px; }
+
+        .stat {
+            display: inline-block;
+            width: 32%;
+            margin-right: 1%;
+            min-height: 135px;
+            padding: 22px;
+            border: 1px solid #ead1d5;
+            background: #ffffff;
+            vertical-align: top;
+            text-align: left;
+        }
+
+        .stat span { color: #765b60; font-size: 14px; }
+        .stat strong { display: block; margin-top: 10px; color: #8b1e2d; font-size: 25px; }
+        .stat-detail { margin: 12px 0 0; color: #765b60; font-size: 13px; line-height: 1.4; }
+        .user small { color: #765b60; font-size: 13px; }
+
+        .panel {
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ead1d5;
+            background: #ffffff;
+        }
+
+        .panel h2, .panel h3 { margin-top: 0; color: #8b1e2d; }
+
+        .message {
+            margin-bottom: 15px;
+            padding: 10px;
+            background: #fde8ec;
+            color: #8b1e2d;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #842029;
+        }
+
+        .user {
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ead1d5;
+            overflow: hidden;
+        }
+
+        .user-actions {
+            float: right;
+            width: 350px;
+        }
+
+        .user-actions form { display: inline-block; margin-left: 5px; }
+
+        form { margin: 0; }
+
+        label { display: block; margin: 8px 0 4px; font-size: 13px; font-weight: bold; }
+
+        input,
+        select {
+            width: 100%;
+            padding: 7px;
+            border: 1px solid #d9aab2;
+            background: #ffffff;
+        }
+
+        .user-actions select { width: 115px; }
+
+        button {
+            margin-top: 8px;
+            padding: 8px 14px;
+            border: 0;
+            background: #b42336;
+            color: #ffffff;
+            cursor: pointer;
+        }
+
+        .user-actions button { margin-top: 0; }
+        button:hover { background: #8f1d2b; }
+
+        .danger { background: #7f1d1d; }
+        .danger:hover { background: #5f1515; }
+
+        .add-user { margin-top: 18px; padding-top: 18px; border-top: 1px solid #ead1d5; }
+
+        .add-user div,
+        .sub-panel {
+            display: inline-block;
+            width: 49%;
+            vertical-align: top;
+        }
+
+        .profile-info { margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -92,17 +163,11 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
         <?php if ($section === 'dashboard'): ?>
             <section class="welcome">
                 <div><h1>Admin Dashboard</h1><p>Welcome back, <?php echo $adminName; ?>. Manage JerseyTrack from here.</p></div>
-                <div class="welcome-badge">JT</div>
             </section>
             <div class="stats">
-                <div class="stat"><span>Registered Users</span><strong><?php echo count($users); ?></strong></div>
-                <div class="stat"><span>Admin Account</span><strong>Active</strong></div>
-                <div class="stat"><span>Revenue This Month</span><strong>BDT <?php echo number_format((float) $revenue['monthly_revenue'], 0); ?></strong></div>
-            </div>
-            <div class="quick-links">
-                <a class="quick-link" href="admin_dashboard.php?section=users"><strong>Manage Users</strong><span>View, add, change roles, or delete registered users.</span></a>
-                <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Settings & Account</strong><span>Edit your profile, password, and system settings.</span></a>
-                <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Revenue</strong><span><?php echo (int) $revenue['order_count']; ?> orders recorded. Total: BDT <?php echo number_format((float) $revenue['total_revenue'], 0); ?>.</span></a>
+                <div class="stat"><span>Registered Users</span><strong><?php echo count($users); ?></strong><p class="stat-detail">Total accounts currently registered in the JerseyTrack system.</p></div>
+                <div class="stat"><span>Admin Account</span><strong>Active</strong><p class="stat-detail">Your administrator account is active and ready to manage the system.</p></div>
+                <div class="stat"><span>Revenue This Month</span><strong>BDT <?php echo number_format((float) $revenue['monthly_revenue'], 0); ?></strong><p class="stat-detail"><?php echo (int) $revenue['order_count']; ?> orders recorded with cancelled orders excluded from revenue.</p></div>
             </div>
 
         <?php elseif ($section === 'users'): ?>
@@ -120,7 +185,7 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
                                         <?php foreach (['Admin', 'Manager', 'Salesman', 'Customer'] as $role): ?><option value="<?php echo $role; ?>" <?php echo $user['role'] === $role ? 'selected' : ''; ?>><?php echo $role; ?></option><?php endforeach; ?>
                                     </select><button type="submit">Save Role</button>
                                 </form>
-                                <form method="POST" action="../Controller/AdminController.php" onsubmit="return confirm('Delete this user?');">
+                                <form method="POST" action="../Controller/AdminController.php" data-confirm="Delete this user?">
                                     <input type="hidden" name="action" value="delete_user"><input type="hidden" name="user_id" value="<?php echo (int) $user['id']; ?>"><button class="danger" type="submit">Delete</button>
                                 </form>
                             </div>
@@ -152,10 +217,47 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
                 </section>
                 <section class="panel sub-panel">
                     <h2>Delete Profile</h2><p>This permanently removes your Admin account from the database.</p>
-                    <form method="POST" action="../Controller/AdminController.php" onsubmit="return confirm('Delete your Admin profile permanently?');"><input type="hidden" name="action" value="delete_profile"><label for="delete_password">Confirm Password</label><input id="delete_password" type="password" name="password" required><button class="danger" type="submit">Delete Profile</button></form>
+                    <form method="POST" action="../Controller/AdminController.php" data-confirm="Delete your Admin profile permanently?"><input type="hidden" name="action" value="delete_profile"><label for="delete_password">Confirm Password</label><input id="delete_password" type="password" name="password" required><button class="danger" type="submit">Delete Profile</button></form>
                 </section>
             </div>
         <?php endif; ?>
     </main>
 </body>
+<script>
+    document.querySelectorAll('form[action*="AdminController.php"]').forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (form.dataset.confirm && !confirm(form.dataset.confirm)) {
+                return;
+            }
+
+            const button = form.querySelector('button[type="submit"]');
+            if (button) button.disabled = true;
+
+            const data = new FormData(form);
+            data.append('ajax', '1');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const result = await response.json();
+
+                if (!result.success) {
+                    alert(result.message);
+                    if (button) button.disabled = false;
+                    return;
+                }
+
+                window.location.href = 'admin_dashboard.php?section=' + (result.section || 'dashboard');
+            } catch (error) {
+                alert('Request failed. Please try again.');
+                if (button) button.disabled = false;
+            }
+        });
+    });
+</script>
 </html>

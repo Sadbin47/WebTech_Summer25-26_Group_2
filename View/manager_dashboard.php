@@ -1,367 +1,325 @@
 
 <?php
-// Manager Dashboard 
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
+}
+
+if (!isset($_SESSION['role']) || $_SESSION['role'] !== 'Manager') {
+    header("Location: login.php");
+    exit;
+}
+
+$lastSection = $_COOKIE['manager_last_section'] ?? 'dashboard';
+
+include "header.php";
 ?>
 
-<!DOCTYPE html>
-<html>
+<style>
+.manager-page {
+    min-height: calc(100vh - 62px);
+    background: #f4f7fb;
+    padding: 22px 15px 30px;
+    font-family: Arial, sans-serif;
+}
 
-<head>
-    <title>Manager Dashboard</title>
+.manager-container {
+    width: 92%;
+    max-width: 1100px;
+    margin: auto;
+}
 
-    <style>
-        * {
-            box-sizing: border-box;
-        }
+/* Welcome */
+.welcome-box {
+    background: linear-gradient(135deg, #28795c, #1f9d75);
+    color: white;
+    padding: 20px 24px;
+    border-radius: 8px;
+    margin-bottom: 22px;
+}
 
-        body {
-            margin: 0;
-            font-family: Arial, sans-serif;
-            background: #f5f5f5;
-            color: #222;
-            font-size: 13px;
-        }
+.welcome-box h2 {
+    margin: 0 0 5px;
+    font-size: 26px;
+}
 
-        /* Sidebar  */
-        .sidebar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 180px;
-            height: 100vh;
-            background: #222;
-            padding-top: 15px;
-        }
+.welcome-box p {
+    margin: 0;
+    font-size: 14px;
+}
 
-        .sidebar h3 {
-            color: white;
-            text-align: center;
-            font-size: 16px;
-            margin: 0 0 20px 0;
-        }
+/* Section */
+.section-title {
+    margin-bottom: 12px;
+}
 
-        .sidebar a {
-            display: block;
-            color: #ddd;
-            text-decoration: none;
-            padding: 9px 15px;
-            font-size: 13px;
-        }
+.section-title h3 {
+    margin: 0;
+    color: #252b33;
+    font-size: 19px;
+}
 
-        .sidebar a:hover {
-            background: #444;
-            color: white;
-        }
+.section-title p {
+    margin: 4px 0 0;
+    color: #777;
+    font-size: 13px;
+}
 
-        /* Main area  */
-        .main {
-            margin-left: 180px;
-            padding: 15px 20px;
-        }
+/* Navigation Options */
+.dashboard-options {
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid #e1e5e9;
+}
 
-        /* Header  */
-        .header {
-            background: white;
-            padding: 10px 15px;
-            margin-bottom: 15px;
-            border: 1px solid #ddd;
-        }
+.dashboard-option {
+    display: flex;
+    align-items: center;
+    padding: 16px 20px;
+    text-decoration: none;
+    color: #252b33;
+    border-bottom: 1px solid #e5e8eb;
+    transition: 0.2s;
+}
 
-        .header h2 {
-            margin: 0;
-            font-size: 18px;
-        }
+.dashboard-option:last-child {
+    border-bottom: none;
+}
 
-        /* Dashboard  */
-        .cards {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
+.dashboard-option:hover {
+    background: #f5f9f7;
+    padding-left: 25px;
+}
 
-        .card {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 12px;
-            flex: 1;
-        }
+/* Icon */
+.option-icon {
+    width: 42px;
+    font-size: 24px;
+    text-align: center;
+    margin-right: 15px;
+}
 
-        .card h4 {
-            margin: 0 0 5px 0;
-            color: #666;
-            font-size: 12px;
-        }
+/* Text */
+.option-content {
+    flex: 1;
+}
 
-        .card p {
-            margin: 0;
-            font-size: 18px;
-            font-weight: bold;
-        }
+.option-content h4 {
+    margin: 0 0 3px;
+    font-size: 16px;
+}
 
-        /* Sections  */
-        .section {
-            background: white;
-            border: 1px solid #ddd;
-            padding: 15px;
-            margin-bottom: 15px;
-        }
+.option-content p {
+    margin: 0;
+    color: #777;
+    font-size: 13px;
+}
 
-        .section h3 {
-            margin-top: 0;
-            font-size: 15px;
-        }
+/* Arrow */
+.option-arrow {
+    font-size: 20px;
+    color: #28795c;
+}
 
-        /* Inputs */
-        input,
-        select {
-            padding: 6px;
-            font-size: 12px;
-            border: 1px solid #ccc;
-            margin-right: 4px;
-            margin-bottom: 5px;
-        }
+/* Different colors */
+.employee-option .option-icon {
+    color: #28795c;
+}
 
-        /* Buttons  */
-        button {
-            padding: 6px 10px;
-            font-size: 12px;
-            border: none;
-            background: #333;
-            color: white;
-            cursor: pointer;
-            margin-right: 3px;
-        }
+.product-option .option-icon {
+    color: #2879b9;
+}
 
-        button:hover {
-            background: #555;
-        }
+.information-option .option-icon {
+    color: #d28a24;
+}
 
-        .edit {
-            background: #2878d4;
-        }
+/* Last Section */
+.last-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: white;
+    border-left: 4px solid #28795c;
+    border-radius: 6px;
+}
 
-        .delete {
-            background: #d33;
-        }
+.last-section-label {
+    color: #777;
+    font-size: 13px;
+}
 
-        /* Inventory table  */
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
+.last-section-value {
+    color: #28795c;
+    font-size: 13px;
+    font-weight: bold;
+}
 
-        th,
-        td {
-            padding: 7px;
-            border: 1px solid #ddd;
-            text-align: left;
-            font-size: 12px;
-        }
+/* Responsive */
+@media (max-width: 600px) {
+    .manager-page {
+        padding: 15px 10px 25px;
+    }
 
-        th {
-            background: #eee;
-        }
+    .manager-container {
+        width: 95%;
+    }
 
-        /* Stock status  */
-        .low {
-            color: red;
-            font-weight: bold;
-        }
+    .welcome-box {
+        padding: 17px 18px;
+    }
 
-        .available {
-            color: green;
-            font-weight: bold;
-        }
+    .welcome-box h2 {
+        font-size: 22px;
+    }
 
-        /* Report buttons  */
-        .report-button {
-            margin-right: 8px;
-        }
+    .dashboard-option {
+        padding: 14px;
+    }
 
-        /* Small screens  */
-        @media screen and (max-width: 700px) {
-            .sidebar {
-                width: 140px;
-            }
+    .option-content p {
+        display: none;
+    }
 
-            .main {
-                margin-left: 140px;
-                padding: 10px;
-            }
+    .last-section {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+    }
+}
+</style>
 
-            .cards {
-                flex-direction: column;
-            }
+<div class="manager-page">
 
-            th,
-            td {
-                padding: 5px;
-                font-size: 11px;
-            }
-        }
-    </style>
-</head>
+    <div class="manager-container">
 
-<body>
+        <!-- Welcome -->
+        <div class="welcome-box">
 
-<!-- Sidebar  -->
-<div class="sidebar">
-    <h3>Jersey Manager</h3>
-    <a href="#">Dashboard</a>
-    <a href="#">Inventory</a>
-    <a href="#">Categories</a>
-    <a href="#">Stock</a>
-    <a href="#">Sales</a>
-    <a href="#">Reports</a>
-</div>
+            <h2>Manager Dashboard</h2>
 
-<!-- Main content  -->
-<div class="main">
+            <p>
+                Welcome back,
+                <strong>
+                    <?php echo htmlspecialchars($_SESSION['name'] ?? 'Manager'); ?>
+                </strong>.
+                Manage your operations from here.
+            </p>
 
-    <!-- Header  -->
-    <div class="header">
-        <h2>Manager Dashboard</h2>
-    </div>
-
-    <!-- Dashboard -->
-    <div class="cards">
-        <div class="card">
-            <h4>Total Jerseys</h4>
-            <p>120</p>
         </div>
 
-        <div class="card">
-            <h4>Total Stock</h4>
-            <p>850</p>
+
+        <!-- Management Options -->
+        <div class="section-title">
+
+            <h3>Management Options</h3>
+
+            <p>
+                Select an option to continue.
+            </p>
+
         </div>
 
-        <div class="card">
-            <h4>Low Stock</h4>
-            <p>12</p>
+
+        <!-- Options -->
+        <div class="dashboard-options">
+
+            <a href="manage_employees.php"
+               class="dashboard-option employee-option">
+
+                <div class="option-icon">
+                    👥
+                </div>
+
+                <div class="option-content">
+
+                    <h4>Manage Employees</h4>
+
+                    <p>
+                        Add, update and manage employee records.
+                    </p>
+
+                </div>
+
+                <div class="option-arrow">
+                    →
+                </div>
+
+            </a>
+
+
+            <a href="manage_product.php"
+               class="dashboard-option product-option">
+
+                <div class="option-icon">
+                    📦
+                </div>
+
+                <div class="option-content">
+
+                    <h4>Manage Product</h4>
+
+                    <p>
+                        Manage products and inventory information.
+                    </p>
+
+                </div>
+
+                <div class="option-arrow">
+                    →
+                </div>
+
+            </a>
+
+
+            <a href="update_manager.php"
+               class="dashboard-option information-option">
+
+                <div class="option-icon">
+                    👤
+                </div>
+
+                <div class="option-content">
+
+                    <h4>My Information</h4>
+
+                    <p>
+                        View and update your manager information.
+                    </p>
+
+                </div>
+
+                <div class="option-arrow">
+                    →
+                </div>
+
+            </a>
+
         </div>
 
-        <div class="card">
-            <h4>Total Sales</h4>
-            <p>৳85,000</p>
+
+        <!-- Last Visited -->
+        <div class="last-section">
+
+            <span class="last-section-label">
+                Last visited section
+            </span>
+
+            <span class="last-section-value">
+                <?php echo htmlspecialchars($lastSection); ?>
+            </span>
+
         </div>
-    </div>
 
-    <!-- Add jersey -->
-    <div class="section">
-        <h3>Add Jersey</h3>
-
-        <form>
-            <input type="text" placeholder="Jersey Name">
-
-            <select>
-                <option>Football</option>
-            </select>
-            <input type="number" placeholder="Price">
-            <input type="number" placeholder="Stock">
-            <button type="submit">Add Jersey</button>
-        </form>
-    </div>
-
-    <!--Inventory-->
-    <div class="section">
-        <h3>Jersey Inventory</h3>
-        <input type="text" placeholder="Search Jersey">
-
-        <select>
-            <option>All Jerseys</option>
-            <option>Football</option>
-        </select>
-
-        <table>
-            <tr>
-                <th>ID</th>
-                <th>Jersey</th>
-                <th>Category</th>
-                <th>Price</th>
-                <th>Stock</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-
-            <tr>
-                <td>1</td>
-                <td>Argentina Jersey</td>
-                <td>Football</td>
-                <td>৳2500</td>
-                <td class="available">50</td>
-                <td class="available">Available</td>
-                <td>
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>2</td>
-                <td>Brazil Jersey</td>
-                <td>Football</td>
-                <td>৳2200</td>
-                <td class="low">5</td>
-                <td class="low">Low Stock</td>
-                <td>
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>3</td>
-                <td>Real Madrid Jersey</td>
-                <td>Football</td>
-                <td>৳2800</td>
-                <td class="available">35</td>
-                <td class="available">Available</td>
-                <td>
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>4</td>
-                <td>Barcelona Jersey</td>
-                <td>Football</td>
-                <td>৳2700</td>
-                <td class="low">4</td>
-                <td class="low">Low Stock</td>
-                <td>
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </td>
-            </tr>
-
-            <tr>
-                <td>5</td>
-                <td>Manchester United Jersey</td>
-                <td>Football</td>
-                <td>৳2600</td>
-                <td class="available">28</td>
-                <td class="available">Available</td>
-                <td>
-                    <button class="edit">Edit</button>
-                    <button class="delete">Delete</button>
-                </td>
-            </tr>
-        </table>
-    </div>
-
-    <!-- Reports -->
-    <div class="section">
-        <h3>Reports</h3>
-
-        <button class="report-button">Sales Report</button>
-        <button class="report-button">Stock Report</button>
-        <button class="report-button">Category Report</button>
     </div>
 
 </div>
 
-</body>
-</html>
+<script>
+document.cookie =
+    "manager_last_section=dashboard; max-age=86400; path=/";
+</script>
 

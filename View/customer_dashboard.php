@@ -61,8 +61,8 @@ foreach ($cart as $item) {
 <html lang="en-US">
 
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">  <!--help to display character properly-->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!--properly display on mobile or tablet screen-->
 
     <title>Customer Dashboard</title>
 
@@ -79,13 +79,18 @@ foreach ($cart as $item) {
             color: #333;
         }
 
+        /* Fixed / Sticky Header at the top */
         header {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
             background: #222;
             color: white;
             padding: 20px 40px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.15);
         }
 
         header h1 {
@@ -153,7 +158,6 @@ foreach ($cart as $item) {
         .price {
             font-weight: bold;
             color: #198754;
-            margin-bottom: 15px;
         }
 
         .btn {
@@ -162,11 +166,6 @@ foreach ($cart as $item) {
             border-radius: 5px;
             cursor: pointer;
             font-size: 14px;
-        }
-
-        .btn-primary {
-            background: #0d6efd;
-            color: white;
         }
 
         .btn-success {
@@ -178,31 +177,47 @@ foreach ($cart as $item) {
             opacity: 0.85;
         }
 
-        /* Cart */
+        /* Shopping Cart List */
 
-        .cart-table,
-        .history-table {
-            width: 100%;
-            border-collapse: collapse;
+        .cart-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
-        .cart-table th,
-        .cart-table td,
-        .history-table th,
-        .history-table td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: center;
+        .cart-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 18px;
+            background: #fdfdfd;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
         }
 
-        .cart-table th,
-        .history-table th {
-            background: #f1f1f1;
+        .cart-item-details h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        .cart-item-details p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .cart-item-subtotal {
+            font-size: 16px;
+            font-weight: bold;
+            color: #198754;
         }
 
         .cart-total {
             text-align: right;
-            margin-top: 15px;
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 2px dashed #ddd;
             font-size: 18px;
             font-weight: bold;
         }
@@ -243,12 +258,55 @@ foreach ($cart as $item) {
             margin-top: 10px;
         }
 
-        /* Status */
+        /* Order History List */
+
+        .order-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .order-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background: #fdfdfd;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+        }
+
+        .order-info h4 {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: #222;
+        }
+
+        .order-info p {
+            font-size: 14px;
+            color: #666;
+        }
+
+        .order-meta {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .order-total {
+            font-weight: bold;
+            font-size: 16px;
+            color: #222;
+        }
+
+        /* Status Badges */
 
         .status {
-            padding: 5px 10px;
+            padding: 6px 12px;
             border-radius: 15px;
             font-size: 13px;
+            font-weight: 500;
         }
 
         .delivered {
@@ -274,9 +332,16 @@ foreach ($cart as $item) {
                 padding: 15px;
             }
 
-            .cart-table,
-            .history-table {
-                font-size: 13px;
+            .cart-item,
+            .order-item {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+
+            .order-meta {
+                width: 100%;
+                justify-content: space-between;
             }
         }
     </style>
@@ -285,362 +350,141 @@ foreach ($cart as $item) {
 <body>
 
 <header>
-
     <h1>Customer Dashboard</h1>
-
     <a href="#" class="logout">Logout</a>
-
 </header>
 
 <div class="container">
 
-    <!--product-->
-
+    <!-- PRODUCT SECTION -->
     <div class="section">
-
         <h2>Available Products</h2>
-
         <div class="product-grid">
-
             <?php foreach ($products as $product): ?>
-
                 <div class="product-card">
-
                     <div class="product-image">
-
                         <?php if (!empty($product['image'])): ?>
-
                             <img
                                 src="<?php echo htmlspecialchars($product['image']); ?>"
                                 alt="<?php echo htmlspecialchars($product['name']); ?>"
                                 style="max-width:100%; max-height:100%;"
                             >
-
                         <?php else: ?>
-
                             Product Image
-
                         <?php endif; ?>
-
                     </div>
 
-                    <h3>
-                        <?php echo htmlspecialchars($product['name']); ?>
-                    </h3>
-
-                    <p class="price">
-                        ৳ <?php echo number_format($product['price'], 2); ?>
-                    </p>
-
-                    <form method="POST" action="">
-
-                        <input
-                            type="hidden"
-                            name="product_id"
-                            value="<?php echo $product['id']; ?>"
-                        >
-
-                        <input
-                            type="hidden"
-                            name="action"
-                            value="add_to_cart"
-                        >
-
-                        <button
-                            type="submit"
-                            class="btn btn-primary"
-                        >
-                            Add to Cart
-                        </button>
-
-                    </form>
-
+                    <h3><?php echo htmlspecialchars($product['name']); ?></h3>
+                    <p class="price">৳ <?php echo number_format($product['price'], 2); ?></p>
                 </div>
-
             <?php endforeach; ?>
-
         </div>
-
     </div>
 
 
-    <!--CART-->
-
+    <!-- CART SECTION -->
     <div class="section">
-
         <h2>Shopping Cart</h2>
 
         <?php if (!empty($cart)): ?>
-
-            <table class="cart-table">
-
-                <thead>
-
-                    <tr>
-                        <th>Product</th>
-                        <th>Price</th>
-                        <th>Quantity</th>
-                        <th>Subtotal</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    <?php foreach ($cart as $item): ?>
-
-                        <tr>
-
-                            <td>
-                                <?php echo htmlspecialchars($item['name']); ?>
-                            </td>
-
-                            <td>
-                                ৳ <?php echo number_format($item['price'], 2); ?>
-                            </td>
-
-                            <td>
-                                <?php echo $item['quantity']; ?>
-                            </td>
-
-                            <td>
-                                ৳ <?php
-                                echo number_format(
-                                    $item['price'] * $item['quantity'],
-                                    2
-                                );
-                                ?>
-                            </td>
-
-                        </tr>
-
-                    <?php endforeach; ?>
-
-                </tbody>
-
-            </table>
+            <ul class="cart-list">
+                <?php foreach ($cart as $item): ?>
+                    <li class="cart-item">
+                        <div class="cart-item-details">
+                            <h4><?php echo htmlspecialchars($item['name']); ?></h4>
+                            <p>Price: ৳ <?php echo number_format($item['price'], 2); ?> | Quantity: <?php echo $item['quantity']; ?></p>
+                        </div>
+                        <div class="cart-item-subtotal">
+                            ৳ <?php echo number_format($item['price'] * $item['quantity'], 2); ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
 
             <div class="cart-total">
-
-                Total:
-                ৳ <?php echo number_format($cartTotal, 2); ?>
-
+                Total: ৳ <?php echo number_format($cartTotal, 2); ?>
             </div>
-
         <?php else: ?>
-
             <p>Your cart is empty.</p>
-
         <?php endif; ?>
-
     </div>
 
 
-    <!--CHECKOUT-->
-
+    <!-- CHECKOUT SECTION -->
     <div class="section">
-
         <h2>Checkout</h2>
-
-        <form
-            method="POST"
-            action=""
-            class="checkout-form"
-        >
-
-            <input
-                type="hidden"
-                name="action"
-                value="checkout"
-            >
+        <form method="POST" action="" class="checkout-form">
+            <input type="hidden" name="action" value="checkout">
 
             <div class="form-group">
-
-                <label for="name">
-                    Full Name
-                </label>
-
-                <input
-                    type="text"
-                    id="name"
-                    name="name"
-                    placeholder="Enter your full name"
-                    required
-                >
-
+                <label for="name">Full Name</label>
+                <input type="text" id="name" name="name" placeholder="Enter your full name" required>
             </div>
 
-
             <div class="form-group">
-
-                <label for="email">
-                    Email
-                </label>
-
-                <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    placeholder="Enter your email"
-                    required
-                >
-
+                <label for="email">Email</label>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required>
             </div>
 
-
             <div class="form-group">
-
-                <label for="phone">
-                    Phone Number
-                </label>
-
-                <input
-                    type="tel"
-                    id="phone"
-                    name="phone"
-                    placeholder="Enter your phone number"
-                    required
-                >
-
+                <label for="phone">Phone Number</label>
+                <input type="tel" id="phone" name="phone" placeholder="Enter your phone number" required>
             </div>
 
-
             <div class="form-group">
-
-                <label for="address">
-                    Delivery Address
-                </label>
-
-                <textarea
-                    id="address"
-                    name="address"
-                    placeholder="Enter your delivery address"
-                    required
-                ></textarea>
-
+                <label for="address">Delivery Address</label>
+                <textarea id="address" name="address" placeholder="Enter your delivery address" required></textarea>
             </div>
 
-
             <div class="form-group">
-
-                <label for="payment">
-                    Payment Method
-                </label>
-
-                <select
-                    id="payment"
-                    name="payment"
-                    required
-                >
-
-                    <option value="">
-                        Select payment method
-                    </option>
-
-                    <option value="cash">
-                        Cash on Delivery
-                    </option>
-
-                    <option value="card">
-                        Card
-                    </option>
-
-                    <option value="mobile_banking">
-                        Mobile Banking
-                    </option>
-
+                <label for="payment">Payment Method</label>
+                <select id="payment" name="payment" required>
+                    <option value="">Select payment method</option>
+                    <option value="cash">Cash on Delivery</option>
+                    <option value="card">Card</option>
+                    <option value="mobile_banking">Mobile Banking</option>
                 </select>
-
             </div>
 
-
-            <button
-                type="submit"
-                class="btn btn-success checkout-button"
-            >
+            <button type="submit" class="btn btn-success checkout-button">
                 Place Order
             </button>
-
         </form>
-
     </div>
 
 
-    <!--ORDER HISTORY-->
-
+    <!-- ORDER HISTORY SECTION -->
     <div class="section">
-
         <h2>Order History</h2>
-
         <?php if (!empty($orderHistory)): ?>
-
-            <table class="history-table">
-
-                <thead>
-
-                    <tr>
-                        <th>Order ID</th>
-                        <th>Date</th>
-                        <th>Total</th>
-                        <th>Status</th>
-                    </tr>
-
-                </thead>
-
-                <tbody>
-
-                    <?php foreach ($orderHistory as $order): ?>
-
-                        <tr>
-
-                            <td>
-                                <?php echo htmlspecialchars($order['order_id']); ?>
-                            </td>
-
-                            <td>
-                                <?php echo htmlspecialchars($order['date']); ?>
-                            </td>
-
-                            <td>
+            <ul class="order-list">
+                <?php foreach ($orderHistory as $order): ?>
+                    <li class="order-item">
+                        <div class="order-info">
+                            <h4>Order #<?php echo htmlspecialchars($order['order_id']); ?></h4>
+                            <p>Date: <?php echo htmlspecialchars($order['date']); ?></p>
+                        </div>
+                        <div class="order-meta">
+                            <span class="order-total">
                                 ৳ <?php echo number_format($order['total'], 2); ?>
-                            </td>
-
-                            <td>
-
-                                <?php if ($order['status'] === 'Delivered'): ?>
-
-                                    <span class="status delivered">
-                                        Delivered
-                                    </span>
-
-                                <?php else: ?>
-
-                                    <span class="status processing">
-                                        <?php echo htmlspecialchars($order['status']); ?>
-                                    </span>
-
-                                <?php endif; ?>
-
-                            </td>
-
-                        </tr>
-
-                    <?php endforeach; ?>
-
-                </tbody>
-
-            </table>
-
+                            </span>
+                            <?php if ($order['status'] === 'Delivered'): ?>
+                                <span class="status delivered">Delivered</span>
+                            <?php else: ?>
+                                <span class="status processing">
+                                    <?php echo htmlspecialchars($order['status']); ?>
+                                </span>
+                            <?php endif; ?>
+                        </div>
+                    </li>
+                <?php endforeach; ?>
+            </ul>
         <?php else: ?>
-
             <p>No previous orders found.</p>
-
         <?php endif; ?>
-
     </div>
 
 </div>
 
 </body>
-
 </html>

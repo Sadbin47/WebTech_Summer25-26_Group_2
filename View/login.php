@@ -33,12 +33,12 @@ function collect_data() {
 <?php include 'header.php'; ?>
 <h2>System Login</h2>
 <?php if ($loginError !== ''): ?>
-    <p style="color: white; background: #b94747; padding: 8px 12px;">
+    <p class="message error">
         <?php echo htmlspecialchars($loginError); ?>
     </p>
 <?php endif; ?>
 <?php if ($loginMessage !== ''): ?>
-    <p style="color: white; background: #28795c; padding: 8px 12px;">
+    <p class="message success">
         <?php echo htmlspecialchars($loginMessage); ?>
     </p>
 <?php endif; ?>

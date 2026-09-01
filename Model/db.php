@@ -36,6 +36,7 @@ class Database
             $this->createJerseysTable($connection);
             $this->createOrderItemsTable($connection);
             $this->createDefaultAdmin($connection);
+            $this->createDefaultManager($connection);
 
             // Temporary products so the Salesman POS can work while Manager is empty.
             $this->seedDemoJerseys($connection);
@@ -105,6 +106,53 @@ class Database
             'meta_value' => '1'
         ]);
     }
+  
+private function createDefaultManager(PDO $connection): void
+{
+    $seedCheck = $connection->prepare(
+        'SELECT meta_value FROM app_meta WHERE meta_key = :meta_key'
+    );
+
+    $seedCheck->execute([
+        'meta_key' => 'manager_seeded'
+    ]);
+
+    if ($seedCheck->fetch()) {
+        return;
+    }
+
+    $check = $connection->prepare(
+        'SELECT id FROM users WHERE username = :username'
+    );
+
+    $check->execute([
+        'username' => 'manager'
+    ]);
+
+    if (!$check->fetch()) {
+        $insert = $connection->prepare(
+            'INSERT INTO users (name, username, password, role)
+             VALUES (:name, :username, :password, :role)'
+        );
+
+        $insert->execute([
+            'name' => 'Manager',
+            'username' => 'manager',
+            'password' => password_hash('manager', PASSWORD_DEFAULT),
+            'role' => 'Manager'
+        ]);
+    }
+
+    $markSeeded = $connection->prepare(
+        'INSERT INTO app_meta (meta_key, meta_value)
+         VALUES (:meta_key, :meta_value)'
+    );
+
+    $markSeeded->execute([
+        'meta_key' => 'manager_seeded',
+        'meta_value' => '1'
+    ]);
+}
 
     private function createSettingsTable(PDO $connection): void
     {
@@ -238,3 +286,4 @@ class Database
         }
     }
 }
+

@@ -14,7 +14,7 @@ class UserModel
         $statement = $this->connection->prepare(
             'SELECT id, name, username, password, role
              FROM users
-             WHERE username = :username'
+             WHERE BINARY username = :username'
         );
         $statement->execute(['username' => $username]);
 
@@ -131,3 +131,4 @@ class UserModel
         ];
     }
 }
+

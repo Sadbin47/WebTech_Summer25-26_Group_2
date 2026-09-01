@@ -10,8 +10,23 @@ if (($_SESSION['role'] ?? '') !== 'Admin') {
     exit;
 }
 
+$isAjax = ($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '') === 'XMLHttpRequest'
+    || isset($_POST['ajax']);
+
 function returnToDashboard(string $message, bool $error = false, string $section = 'dashboard'): void
 {
+    global $isAjax;
+
+    if ($isAjax) {
+        header('Content-Type: application/json; charset=utf-8');
+        echo json_encode([
+            'success' => !$error,
+            'message' => $message,
+            'section' => $section
+        ]);
+        exit;
+    }
+
     $_SESSION[$error ? 'admin_error' : 'admin_message'] = $message;
     header('Location: ../View/admin_dashboard.php?section=' . urlencode($section));
     exit;
@@ -120,6 +135,13 @@ try {
         $userModel->deleteUser((int) $_SESSION['user_id']);
         $_SESSION = [];
         session_destroy();
+
+        if ($isAjax) {
+            header('Content-Type: application/json; charset=utf-8');
+            echo json_encode(['success' => true, 'message' => 'Profile deleted.']);
+            exit;
+        }
+
         header('Location: ../View/login.php');
         exit;
     }
