@@ -21,6 +21,7 @@ if (!isset($_SESSION['sales_cart']) || !is_array($_SESSION['sales_cart'])) {
 }
 
 $page = $_GET['page'] ?? 'sale';
+
 if (!in_array($page, ['sale', 'payment'], true)) {
     $page = 'sale';
 }
@@ -37,13 +38,17 @@ $availableJerseys = $jerseyModel->getAvailableJerseys();
 $salesHistory = $orderModel->getSalesmanOrders((int) $_SESSION['user_id']);
 $monthlySales = $orderModel->getMonthlySalesBySalesman((int) $_SESSION['user_id']);
 
+// Simple Salesman target progress for rubric/display.
 $monthlyTarget = 100000.00;
-$targetPercent = $monthlyTarget > 0 ? min(100, ($monthlySales / $monthlyTarget) * 100) : 0;
+$targetPercent = $monthlyTarget > 0
+    ? min(100, ($monthlySales / $monthlyTarget) * 100)
+    : 0;
 
 $message = $_SESSION['salesman_message'] ?? '';
 $error = $_SESSION['salesman_error'] ?? '';
 unset($_SESSION['salesman_message'], $_SESSION['salesman_error']);
 
+// Cookies are read to prefill the last customer's name and phone.
 $lastCustomerName = htmlspecialchars($_COOKIE['last_customer_name'] ?? '');
 $lastCustomerPhone = htmlspecialchars($_COOKIE['last_customer_phone'] ?? '');
 $today = date('Y-m-d');
@@ -66,7 +71,9 @@ $jerseyJson = json_encode(
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Salesman Dashboard - JerseyTrack</title>
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         body {
             margin: 0;
@@ -79,22 +86,22 @@ $jerseyJson = json_encode(
             width: 94%;
             max-width: 1180px;
             margin: auto;
-            padding: 22px 0 45px;
+            padding: 24px 0 45px;
         }
 
         .breadcrumb {
-            margin-bottom: 5px;
-            color: #b7b7b7;
-            font-size: 14px;
+            margin-bottom: 6px;
+            color: #a8a8a8;
+            font-size: 13px;
         }
 
         h1 {
-            margin: 0 0 24px;
-            font-size: 24px;
+            margin: 0 0 22px;
+            font-size: 26px;
         }
 
         h2 {
-            margin: 0 0 18px;
+            margin: 0 0 17px;
             font-size: 19px;
         }
 
@@ -124,7 +131,7 @@ $jerseyJson = json_encode(
         .target-card {
             display: grid;
             grid-template-columns: 1fr auto;
-            gap: 16px;
+            gap: 18px;
             align-items: center;
             margin-bottom: 24px;
             padding: 18px 20px;
@@ -133,8 +140,15 @@ $jerseyJson = json_encode(
             background: #181818;
         }
 
-        .target-card small { color: #a9a9a9; }
-        .target-card strong { display: block; margin-top: 5px; font-size: 21px; }
+        .target-card small {
+            color: #a9a9a9;
+        }
+
+        .target-card strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 20px;
+        }
 
         .progress {
             width: 100%;
@@ -152,11 +166,11 @@ $jerseyJson = json_encode(
         }
 
         .target-percent {
-            min-width: 78px;
+            min-width: 82px;
             text-align: center;
+            color: #8dc1ff;
             font-size: 20px;
             font-weight: bold;
-            color: #8dc1ff;
         }
 
         .product-form {
@@ -164,7 +178,13 @@ $jerseyJson = json_encode(
             grid-template-columns: 2fr 1fr 1fr auto;
             gap: 12px;
             align-items: end;
-            margin-bottom: 12px;
+            margin-bottom: 10px;
+        }
+
+        .customer-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 16px;
         }
 
         label {
@@ -175,7 +195,8 @@ $jerseyJson = json_encode(
             font-weight: bold;
         }
 
-        input, select, textarea {
+        input,
+        select {
             width: 100%;
             padding: 10px 12px;
             border: 1px solid #3b3b3b;
@@ -186,30 +207,22 @@ $jerseyJson = json_encode(
             outline: none;
         }
 
-        input:focus, select:focus, textarea:focus {
+        input:focus,
+        select:focus {
             border-color: #2f7edb;
         }
 
         input[readonly] {
-            color: #e7e7e7;
             background: #202020;
+            color: #ededed;
         }
 
-        textarea { min-height: 80px; resize: vertical; }
-
-        .product-info {
-            min-height: 20px;
-            margin-bottom: 18px;
-            color: #9f9f9f;
-            font-size: 13px;
-        }
-
-        button, .button-link {
+        button,
+        .button-link {
             display: inline-flex;
             align-items: center;
             justify-content: center;
-            gap: 6px;
-            min-height: 39px;
+            min-height: 40px;
             padding: 9px 16px;
             border: 1px solid transparent;
             border-radius: 8px;
@@ -220,8 +233,15 @@ $jerseyJson = json_encode(
             cursor: pointer;
         }
 
-        button:hover, .button-link:hover { filter: brightness(1.08); }
-        button:disabled { opacity: .45; cursor: not-allowed; }
+        button:hover,
+        .button-link:hover {
+            filter: brightness(1.08);
+        }
+
+        button:disabled {
+            opacity: .45;
+            cursor: not-allowed;
+        }
 
         .button-outline {
             border-color: #484848;
@@ -235,24 +255,31 @@ $jerseyJson = json_encode(
             color: #ff7474;
         }
 
-        .search-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 12px;
-            align-items: center;
-            margin: 15px 0 8px;
+        .product-info {
+            min-height: 20px;
+            margin: 4px 0 17px;
+            color: #a9a9a9;
+            font-size: 13px;
         }
 
-        .search-count { color: #c9c9c9; font-size: 14px; }
+        .search-row {
+            display: grid;
+            grid-template-columns: 1fr 190px;
+            gap: 12px;
+            margin: 14px 0;
+        }
 
-        .table-wrap { overflow-x: auto; }
+        .table-wrap {
+            overflow-x: auto;
+        }
 
         table {
             width: 100%;
             border-collapse: collapse;
         }
 
-        th, td {
+        th,
+        td {
             padding: 13px 10px;
             border-bottom: 1px solid #333;
             text-align: left;
@@ -260,223 +287,296 @@ $jerseyJson = json_encode(
         }
 
         th {
-            color: #cfcfcf;
-            font-size: 13px;
+            color: #a8a8a8;
+            font-size: 12px;
+            text-transform: uppercase;
         }
 
-        td { font-size: 14px; }
-
-        .sort-button {
-            min-height: 0;
-            padding: 0;
-            border: 0;
-            background: transparent;
-            color: #cfcfcf;
+        td {
+            font-size: 14px;
         }
 
         .qty-form {
             display: flex;
-            gap: 6px;
+            gap: 7px;
             align-items: center;
         }
 
         .qty-form input {
-            width: 68px;
-            padding: 8px;
+            width: 74px;
         }
 
-        .qty-form button { min-height: 34px; padding: 7px 10px; }
-
-        .empty-row {
-            padding: 28px 10px;
-            text-align: center;
-            color: #8c8c8c;
+        .qty-form button {
+            min-height: 35px;
+            padding: 7px 10px;
         }
 
-        .order-total {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 20px;
-            align-items: end;
-            margin-top: 22px;
-            padding-top: 18px;
-            border-top: 1px solid #343434;
+        .order-summary {
+            display: flex;
+            justify-content: flex-end;
+            gap: 28px;
+            margin-top: 18px;
+            padding-top: 15px;
+            border-top: 1px solid #333;
         }
 
-        .order-total span {
-            display: block;
-            margin-bottom: 5px;
-            color: #bdbdbd;
-            font-size: 13px;
-        }
-
-        .order-total strong { font-size: 22px; }
-        .price-box { text-align: right; }
-
-        .proceed-form { margin-top: 16px; }
-        .proceed-form button { width: 100%; }
-
-        .two-column {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 18px;
-        }
-
-        .field-full { grid-column: 1 / -1; }
-
-        .promo-row {
-            display: grid;
-            grid-template-columns: 1fr auto;
-            gap: 9px;
-        }
-
-        .promo-message {
-            min-height: 18px;
-            margin-top: 6px;
-            color: #9db9d8;
+        .order-summary span {
+            color: #aaa;
             font-size: 12px;
         }
 
-        .payment-actions {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
+        .order-summary strong {
+            display: block;
+            margin-top: 5px;
+            font-size: 19px;
+        }
+
+        .checkout-row {
+            display: flex;
+            justify-content: flex-end;
             margin-top: 18px;
         }
 
-        .payment-actions button { width: 100%; }
+        .payment-summary {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 16px;
+        }
 
-        .small-text { color: #999; font-size: 12px; }
-        .status { font-weight: bold; color: #ffcf73; }
+        .summary-box {
+            padding: 14px;
+            border: 1px solid #333;
+            border-radius: 8px;
+            background: #202020;
+        }
 
-        .section-heading {
+        .summary-box span {
+            display: block;
+            margin-bottom: 5px;
+            color: #9e9e9e;
+            font-size: 12px;
+        }
+
+        .summary-box strong {
+            font-size: 20px;
+        }
+
+        .payment-actions {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
             gap: 10px;
+            margin-top: 20px;
         }
 
-        .section-heading a { color: #8dc1ff; text-decoration: none; font-size: 13px; }
-
-        @media (max-width: 800px) {
-            .product-form, .two-column {
-    grid-template-columns: 1fr;
-}
-            .field-full { grid-column: auto; }
-            .order-total { grid-template-columns: 1fr 1fr; }
+        .phone-message {
+            min-height: 18px;
+            margin-top: 6px;
+            color: #999;
+            font-size: 12px;
         }
 
-        @media (max-width: 520px) {
-            .sales-main { width: 92%; }
-            .target-card { grid-template-columns: 1fr; }
-            .target-percent { text-align: left; }
-            .payment-actions, .order-total { grid-template-columns: 1fr; }
-            .price-box { text-align: left; }
+        .phone-message.success {
+            color: #62c990;
+        }
+
+        .phone-message.error {
+            color: #ff7474;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 5px 9px;
+            border-radius: 20px;
+            background: #2a3544;
+            color: #9bc5ff;
+            font-size: 12px;
+        }
+
+        .empty {
+            padding: 24px 10px;
+            color: #999;
+            text-align: center;
+        }
+
+        @media (max-width: 760px) {
+            .product-form,
+            .customer-grid,
+            .payment-summary,
+            .search-row {
+                grid-template-columns: 1fr;
+            }
+
+            .target-card {
+                grid-template-columns: 1fr;
+            }
+
+            .target-percent {
+                text-align: left;
+            }
+
+            .order-summary,
+            .payment-actions {
+                flex-direction: column;
+            }
         }
     </style>
 </head>
-<body data-cart-quantity="<?php echo (int) $cartSummary['total_quantity']; ?>">
+<body>
 <?php include 'header.php'; ?>
 
 <main class="sales-main">
     <?php if ($message !== ''): ?>
-        <div class="message"><?php echo htmlspecialchars($message); ?></div>
+        <div class="message">
+            <?php echo htmlspecialchars($message); ?>
+        </div>
     <?php endif; ?>
 
     <?php if ($error !== ''): ?>
-        <div class="message error"><?php echo htmlspecialchars($error); ?></div>
+        <div class="message error">
+            <?php echo htmlspecialchars($error); ?>
+        </div>
     <?php endif; ?>
 
     <?php if ($page === 'sale'): ?>
-        <div class="breadcrumb">Salesman dashboard / New order</div>
-        <h1>Build order</h1>
+        <div class="breadcrumb">Salesman Dashboard / New Sale</div>
+        <h1>Build Order</h1>
 
         <section class="target-card">
             <div>
-                <small>Monthly sales target</small>
-                <strong>BDT <?php echo number_format($monthlySales, 0); ?> / <?php echo number_format($monthlyTarget, 0); ?></strong>
+                <small>Monthly Sales Target</small>
+                <strong>
+                    BDT <?php echo number_format($monthlySales, 0); ?>
+                    / BDT <?php echo number_format($monthlyTarget, 0); ?>
+                </strong>
                 <div class="progress">
                     <div style="width: <?php echo number_format($targetPercent, 2, '.', ''); ?>%;"></div>
                 </div>
             </div>
-            <div class="target-percent"><?php echo number_format($targetPercent, 0); ?>%</div>
+            <div class="target-percent">
+                <?php echo number_format($targetPercent, 0); ?>%
+            </div>
         </section>
 
         <section class="panel" id="sale">
-            <form class="product-form" method="POST" action="../Controller/SalesmanController.php" onsubmit="return validateAddItem()">
+            <h2>Select Jersey</h2>
+
+            <form
+                class="product-form"
+                method="POST"
+                action="../Controller/SalesmanController.php"
+                onsubmit="return validateAddProduct()"
+            >
                 <input type="hidden" name="action" value="add_to_cart">
-                <input type="hidden" id="jersey_id" name="jersey_id" value="">
+                <input type="hidden" id="jerseyId" name="jersey_id" value="">
 
                 <div>
-                    <label for="jersey_name">Jersey</label>
-                    <select id="jersey_name" required>
-                        <?php if (!$jerseyNames): ?>
-                            <option value="">No jersey available</option>
-                        <?php else: ?>
-                            <?php foreach ($jerseyNames as $name): ?>
-                                <option value="<?php echo htmlspecialchars($name); ?>"><?php echo htmlspecialchars($name); ?></option>
-                            <?php endforeach; ?>
-                        <?php endif; ?>
+                    <label for="jerseyName">Jersey Name</label>
+                    <select id="jerseyName" required>
+                        <option value="">Select jersey</option>
+                        <?php foreach ($jerseyNames as $jerseyName): ?>
+                            <option value="<?php echo htmlspecialchars($jerseyName); ?>">
+                                <?php echo htmlspecialchars($jerseyName); ?>
+                            </option>
+                        <?php endforeach; ?>
                     </select>
                 </div>
 
                 <div>
-                    <label for="jersey_size">Size</label>
-                    <select id="jersey_size" required></select>
+                    <label for="jerseySize">Size</label>
+                    <select id="jerseySize" required disabled>
+                        <option value="">Select size</option>
+                    </select>
                 </div>
 
                 <div>
-                    <label for="sale_quantity">Qty</label>
-                    <input id="sale_quantity" type="number" name="quantity" min="1" value="1" required>
+                    <label for="saleQuantity">Quantity</label>
+                    <input
+                        id="saleQuantity"
+                        type="number"
+                        name="quantity"
+                        min="1"
+                        value="1"
+                        required
+                    >
                 </div>
 
-                <button type="submit" <?php echo !$jerseyNames ? 'disabled' : ''; ?>>+ Add to order</button>
+                <button type="submit">Add to Order</button>
             </form>
 
-            <div class="product-info" id="productInfo"></div>
+            <div id="productInfo" class="product-info">
+                Select a jersey and size to see price and stock.
+            </div>
 
             <div class="search-row">
-                <input type="text" id="cartSearch" placeholder="Search this order by jersey name">
-                <div class="search-count"><span id="visibleItemCount"><?php echo count($cartSummary['items']); ?></span> items</div>
+                <input
+                    id="cartSearch"
+                    type="text"
+                    placeholder="Search selected jerseys by name..."
+                    oninput="filterCart()"
+                >
+
+                <select id="cartSort" onchange="sortCart()">
+                    <option value="name_asc">Jersey Name A-Z</option>
+                    <option value="name_desc">Jersey Name Z-A</option>
+                    <option value="qty_asc">Quantity Low-High</option>
+                    <option value="qty_desc">Quantity High-Low</option>
+                </select>
             </div>
 
             <div class="table-wrap">
                 <table id="cartTable">
                     <thead>
                         <tr>
-                            <th><button class="sort-button" type="button" onclick="sortCart('name')">Jersey name ⇅</button></th>
+                            <th>Jersey Name</th>
                             <th>Size</th>
-                            <th>Unit price</th>
-                            <th><button class="sort-button" type="button" onclick="sortCart('quantity')">Quantity ⇅</button></th>
+                            <th>Quantity</th>
+                            <th>Price</th>
                             <th>Subtotal</th>
                             <th>Action</th>
                         </tr>
                     </thead>
-                    <tbody id="cartBody">
+                    <tbody>
                     <?php if (!$cartSummary['items']): ?>
-                        <tr class="no-cart-items"><td colspan="6" class="empty-row">No jersey added to this order yet.</td></tr>
+                        <tr class="empty-row">
+                            <td colspan="6" class="empty">
+                                No jerseys selected yet.
+                            </td>
+                        </tr>
                     <?php else: ?>
                         <?php foreach ($cartSummary['items'] as $item): ?>
-                            <tr class="cart-row"
+                            <tr
+                                class="cart-item-row"
                                 data-name="<?php echo htmlspecialchars(strtolower($item['name'])); ?>"
-                                data-quantity="<?php echo (int) $item['quantity']; ?>">
+                                data-quantity="<?php echo (int) $item['quantity']; ?>"
+                            >
                                 <td><?php echo htmlspecialchars($item['name']); ?></td>
                                 <td><?php echo htmlspecialchars($item['size']); ?></td>
-                                <td>৳<?php echo number_format((float) $item['unit_price'], 0); ?></td>
                                 <td>
-                                    <form class="qty-form" method="POST" action="../Controller/SalesmanController.php">
+                                    <form
+                                        class="qty-form"
+                                        method="POST"
+                                        action="../Controller/SalesmanController.php"
+                                    >
                                         <input type="hidden" name="action" value="update_quantity">
                                         <input type="hidden" name="jersey_id" value="<?php echo (int) $item['id']; ?>">
-                                        <input type="number" name="quantity" min="1" max="<?php echo (int) $item['available_stock']; ?>" value="<?php echo (int) $item['quantity']; ?>" required>
-                                        <button class="button-outline" type="submit">Update</button>
+                                        <input
+                                            type="number"
+                                            name="quantity"
+                                            min="1"
+                                            max="<?php echo (int) $item['available_stock']; ?>"
+                                            value="<?php echo (int) $item['quantity']; ?>"
+                                            required
+                                        >
+                                        <button type="submit" class="button-outline">Update</button>
                                     </form>
                                 </td>
-                                <td>৳<?php echo number_format((float) $item['subtotal'], 0); ?></td>
+                                <td>BDT <?php echo number_format((float) $item['unit_price'], 2); ?></td>
+                                <td>BDT <?php echo number_format((float) $item['subtotal'], 2); ?></td>
                                 <td>
-                                    <form method="POST" action="../Controller/SalesmanController.php" onsubmit="return confirm('Remove this jersey from the order?');">
+                                    <form method="POST" action="../Controller/SalesmanController.php">
                                         <input type="hidden" name="action" value="remove_item">
                                         <input type="hidden" name="jersey_id" value="<?php echo (int) $item['id']; ?>">
-                                        <button class="button-danger" type="submit">Remove</button>
+                                        <button type="submit" class="button-danger">Remove</button>
                                     </form>
                                 </td>
                             </tr>
@@ -486,161 +586,219 @@ $jerseyJson = json_encode(
                 </table>
             </div>
 
-            <div class="order-total">
+            <div class="order-summary">
                 <div>
-                    <span>Total quantity</span>
-                    <strong><?php echo (int) $cartSummary['total_quantity']; ?></strong>
+                    <span>Total Jerseys</span>
+                    <strong id="totalQuantityText">
+                        <?php echo (int) $cartSummary['total_quantity']; ?>
+                    </strong>
                 </div>
-                <div class="price-box">
-                    <span>Total price</span>
-                    <strong>৳<?php echo number_format((float) $cartSummary['subtotal'], 0); ?></strong>
+                <div>
+                    <span>Total Price</span>
+                    <strong>
+                        BDT <?php echo number_format((float) $cartSummary['subtotal'], 2); ?>
+                    </strong>
                 </div>
             </div>
 
-            <form class="proceed-form" method="POST" action="../Controller/SalesmanController.php" onsubmit="return validateCheckout()">
-                <input type="hidden" name="action" value="go_payment">
-                <button type="submit" <?php echo (int) $cartSummary['total_quantity'] <= 0 ? 'disabled' : ''; ?>>Proceed to payment →</button>
-            </form>
+            <div class="checkout-row">
+                <form
+                    method="POST"
+                    action="../Controller/SalesmanController.php"
+                    onsubmit="return validateProceed()"
+                >
+                    <input type="hidden" name="action" value="go_payment">
+                    <button
+                        type="submit"
+                        <?php echo (int) $cartSummary['total_quantity'] <= 0 ? 'disabled' : ''; ?>
+                    >
+                        Proceed to Payment
+                    </button>
+                </form>
+            </div>
         </section>
 
         <section class="panel" id="history">
-            <div class="section-heading">
-                <h2>Sales history</h2>
-                <a href="#sale">Back to current order</a>
-            </div>
+            <h2>Sales History</h2>
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
+                            <th>Order</th>
                             <th>Customer</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Purchased jerseys</th>
+                            <th>Purchased Jerseys</th>
                             <th>Qty</th>
-                            <th>Total price</th>
+                            <th>Total</th>
                             <th>Date</th>
                             <th>Status</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php if (!$salesHistory): ?>
-                        <tr><td colspan="8" class="empty-row">No confirmed sales yet.</td></tr>
+                        <tr>
+                            <td colspan="7" class="empty">No sales recorded yet.</td>
+                        </tr>
                     <?php else: ?>
-                        <?php foreach ($salesHistory as $order): ?>
+                        <?php foreach ($salesHistory as $sale): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($order['customer_name'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($order['customer_phone'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($order['customer_email'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($order['purchased_jerseys'] ?? 'N/A'); ?></td>
-                                <td><?php echo (int) $order['total_quantity']; ?></td>
-                                <td>৳<?php echo number_format((float) $order['total_amount'], 0); ?></td>
-                                <td><?php echo htmlspecialchars($order['purchase_date'] ?? substr($order['created_at'], 0, 10)); ?></td>
-                                <td><span class="status"><?php echo htmlspecialchars($order['status']); ?></span></td>
+                                <td>#<?php echo (int) $sale['id']; ?></td>
+                                <td>
+                                    <?php echo htmlspecialchars($sale['customer_name'] ?? ''); ?><br>
+                                    <small><?php echo htmlspecialchars($sale['customer_phone'] ?? ''); ?></small>
+                                </td>
+                                <td><?php echo htmlspecialchars($sale['purchased_jerseys'] ?? ''); ?></td>
+                                <td><?php echo (int) $sale['total_quantity']; ?></td>
+                                <td>BDT <?php echo number_format((float) $sale['total_amount'], 2); ?></td>
+                                <td><?php echo htmlspecialchars($sale['purchase_date'] ?? $sale['created_at']); ?></td>
+                                <td><span class="status"><?php echo htmlspecialchars($sale['status']); ?></span></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                     </tbody>
                 </table>
             </div>
-        </section>       
-
-    <?php else: ?>
-        <div class="breadcrumb">Salesman dashboard / New order / Payment</div>
-        <h1>Customer details</h1>
-
-        <section class="panel">
-            <?php if ($confirmed && (int) $cartSummary['total_quantity'] <= 0): ?>
-                <div class="message">The previous order is saved. Start a new sale when you are ready.</div>
-            <?php endif; ?>
-
-            <form id="paymentForm" method="POST" action="../Controller/SalesmanController.php" onsubmit="return validatePayment(event)">
-                <div class="two-column">
-                    <div class="field-full">
-                        <label for="customer_name">Customer name</label>
-                        <input id="customer_name" type="text" name="customer_name" value="<?php echo $lastCustomerName; ?>" placeholder="Full name" minlength="2" required>
-                    </div>
-
-                    <div>
-                        <label for="customer_phone">Phone number</label>
-                        <input id="customer_phone" type="text" name="customer_phone" value="<?php echo $lastCustomerPhone; ?>" placeholder="01XXX-XXXXXX" required>
-                    </div>
-
-                    <div>
-                        <label for="customer_email">Email address</label>
-                        <input id="customer_email" type="email" name="customer_email" placeholder="name@email.com">
-                    </div>
-
-                    <div>
-                        <label for="payment_quantity">Total quantity</label>
-                        <input id="payment_quantity" type="number" value="<?php echo (int) $cartSummary['total_quantity']; ?>" readonly>
-                    </div>
-
-                    <div>
-                        <label for="totalPrice">Total price (৳)</label>
-                        <input id="totalPrice" type="number" step="0.01" value="<?php echo number_format((float) $cartSummary['subtotal'], 2, '.', ''); ?>" readonly>
-                    </div>
-
-                    <div>
-                        <label for="promoInput">Promo code</label>
-                        <div class="promo-row">
-                            <input id="promoInput" type="text" name="promo_code" maxlength="30" placeholder="Example: JT10">
-                            <button type="button" onclick="applyPromo()">Apply promo</button>
-                        </div>
-                        <div class="promo-message" id="promoMessage">Promo is checked using AJAX without reloading the page.</div>
-                    </div>
-
-                    <div>
-                        <label for="purchase_date">Date of purchase</label>
-                        <input id="purchase_date" type="date" name="purchase_date" max="<?php echo $today; ?>" value="<?php echo $today; ?>" required>
-                    </div>
-                </div>
-
-                <div class="payment-actions">
-                    <button type="submit" name="action" value="confirm_order" <?php echo (int) $cartSummary['total_quantity'] <= 0 ? 'disabled' : ''; ?>>✓ Confirm order</button>
-                    <button class="button-outline" type="submit" name="action" value="cancel_order" formnovalidate>× Exit</button>
-                </div>
-            </form>
         </section>
 
+    <?php else: ?>
+        <div class="breadcrumb">Salesman Dashboard / New Sale / Payment</div>
+        <h1>Customer Information & Payment</h1>
+
+        <?php if ((int) $cartSummary['total_quantity'] > 0): ?>
+            <section class="panel">
+                <h2>Customer Information</h2>
+
+                <form
+                    id="paymentForm"
+                    method="POST"
+                    action="../Controller/SalesmanController.php"
+                    onsubmit="return validatePayment()"
+                >
+                    <input type="hidden" name="action" value="confirm_order">
+
+                    <div class="customer-grid">
+                        <div>
+                            <label for="customerName">Customer Name</label>
+                            <input
+                                id="customerName"
+                                type="text"
+                                name="customer_name"
+                                value="<?php echo $lastCustomerName; ?>"
+                                placeholder="Enter customer name"
+                                minlength="2"
+                                required
+                            >
+                        </div>
+
+                        <div>
+                            <label for="customerPhone">Phone Number</label>
+                            <input
+                                id="customerPhone"
+                                type="text"
+                                name="customer_phone"
+                                value="<?php echo $lastCustomerPhone; ?>"
+                                placeholder="01XXXXXXXXX"
+                                maxlength="15"
+                                required
+                            >
+                            <div id="phoneMessage" class="phone-message"></div>
+                        </div>
+
+                        <div>
+                            <label for="customerEmail">Email Address</label>
+                            <input
+                                id="customerEmail"
+                                type="email"
+                                name="customer_email"
+                                placeholder="name@email.com"
+                            >
+                        </div>
+
+                        <div>
+                            <label for="purchaseDate">Date of Purchase</label>
+                            <input
+                                id="purchaseDate"
+                                type="date"
+                                name="purchase_date"
+                                value="<?php echo $today; ?>"
+                                max="<?php echo $today; ?>"
+                                required
+                            >
+                        </div>
+                    </div>
+
+                    <div class="payment-summary">
+                        <div class="summary-box">
+                            <span>Total Quantity</span>
+                            <strong><?php echo (int) $cartSummary['total_quantity']; ?></strong>
+                        </div>
+
+                        <div class="summary-box">
+                            <span>Total Price</span>
+                            <strong>BDT <?php echo number_format((float) $cartSummary['subtotal'], 2); ?></strong>
+                        </div>
+                    </div>
+
+                    <div class="payment-actions">
+                        <button type="submit">Confirm Order</button>
+                    </div>
+                </form>
+
+                <form
+                    method="POST"
+                    action="../Controller/SalesmanController.php"
+                    onsubmit="return confirm('Cancel this current transaction?');"
+                    style="margin-top: 10px;"
+                >
+                    <input type="hidden" name="action" value="cancel_order">
+                    <button type="submit" class="button-danger">Exit</button>
+                </form>
+            </section>
+        <?php endif; ?>
+
         <section class="panel" id="confirmed-orders">
-            <div class="section-heading">
-                <h2>Confirmed orders</h2>
-                <a href="salesman_dashboard.php?page=sale">Start new sale</a>
-            </div>
+            <h2>Confirmed Orders</h2>
 
             <div class="table-wrap">
                 <table>
                     <thead>
                         <tr>
-                            <th>Customer</th>
-                            <th>Phone</th>
-                            <th>Email</th>
-                            <th>Purchased jerseys</th>
-                            <th>Qty</th>
-                            <th>Total price</th>
-                            <th>Date</th>
-                            <th>Order status</th>
+                            <th>Customer Name</th>
+                            <th>Phone Number</th>
+                            <th>Email Address</th>
+                            <th>Purchased Jerseys</th>
+                            <th>Total Qty</th>
+                            <th>Total Price</th>
+                            <th>Purchase Date</th>
+                            <th>Order Status</th>
                         </tr>
                     </thead>
                     <tbody>
                     <?php if (!$salesHistory): ?>
-                        <tr><td colspan="8" class="empty-row">No confirmed orders yet.</td></tr>
+                        <tr>
+                            <td colspan="8" class="empty">No confirmed sales yet.</td>
+                        </tr>
                     <?php else: ?>
-                        <?php foreach ($salesHistory as $order): ?>
+                        <?php foreach ($salesHistory as $sale): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($order['customer_name'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($order['customer_phone'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($order['customer_email'] ?? 'N/A'); ?></td>
-                                <td><?php echo htmlspecialchars($order['purchased_jerseys'] ?? 'N/A'); ?></td>
-                                <td><?php echo (int) $order['total_quantity']; ?></td>
-                                <td>৳<?php echo number_format((float) $order['total_amount'], 0); ?></td>
-                                <td><?php echo htmlspecialchars($order['purchase_date'] ?? substr($order['created_at'], 0, 10)); ?></td>
-                                <td><span class="status"><?php echo htmlspecialchars($order['status']); ?></span></td>
+                                <td><?php echo htmlspecialchars($sale['customer_name'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($sale['customer_phone'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($sale['customer_email'] ?? ''); ?></td>
+                                <td><?php echo htmlspecialchars($sale['purchased_jerseys'] ?? ''); ?></td>
+                                <td><?php echo (int) $sale['total_quantity']; ?></td>
+                                <td>BDT <?php echo number_format((float) $sale['total_amount'], 2); ?></td>
+                                <td><?php echo htmlspecialchars($sale['purchase_date'] ?? $sale['created_at']); ?></td>
+                                <td><span class="status"><?php echo htmlspecialchars($sale['status']); ?></span></td>
                             </tr>
                         <?php endforeach; ?>
                     <?php endif; ?>
                     </tbody>
                 </table>
+            </div>
+
+            <div style="margin-top: 18px;">
+                <a class="button-link button-outline" href="salesman_dashboard.php?page=sale">
+                    Back to New Sale
+                </a>
             </div>
         </section>
     <?php endif; ?>
@@ -648,76 +806,131 @@ $jerseyJson = json_encode(
 
 <script>
 const jerseyData = <?php echo $jerseyJson ?: '[]'; ?>;
-let sortDirection = { name: 1, quantity: 1 };
-const baseSubtotal = <?php echo json_encode((float) $cartSummary['subtotal']); ?>;
 
-function initializeJerseySelector() {
-    const nameSelect = document.getElementById('jersey_name');
-    const sizeSelect = document.getElementById('jersey_size');
+function initializeJerseySelector()
+{
+    const jerseyName = document.getElementById('jerseyName');
+    const jerseySize = document.getElementById('jerseySize');
 
-    if (!nameSelect || !sizeSelect || jerseyData.length === 0) return;
-
-    function buildSizes() {
-        const selectedName = nameSelect.value;
-        const variants = jerseyData.filter(item => item.name === selectedName);
-        sizeSelect.innerHTML = '';
-
-        variants.forEach(item => {
-            const option = document.createElement('option');
-            option.value = item.size;
-            option.textContent = item.size;
-            sizeSelect.appendChild(option);
-        });
-
-        syncVariant();
+    if (!jerseyName || !jerseySize) {
+        return;
     }
 
-    function syncVariant() {
-        const selected = jerseyData.find(item =>
-            item.name === nameSelect.value && item.size === sizeSelect.value
-        );
+    jerseyName.addEventListener('change', function () {
+        loadSizesForJersey();
+    });
 
-        const hiddenId = document.getElementById('jersey_id');
-        const quantityInput = document.getElementById('sale_quantity');
-        const info = document.getElementById('productInfo');
+    jerseySize.addEventListener('change', function () {
+        updateSelectedJersey();
+    });
+}
 
-        if (!selected) {
-            hiddenId.value = '';
-            info.textContent = '';
-            return;
+function loadSizesForJersey()
+{
+    const jerseyName = document.getElementById('jerseyName');
+    const jerseySize = document.getElementById('jerseySize');
+    const jerseyId = document.getElementById('jerseyId');
+    const productInfo = document.getElementById('productInfo');
+
+    if (!jerseyName || !jerseySize || !jerseyId) {
+        return;
+    }
+
+    const selectedName = jerseyName.value;
+
+    jerseySize.innerHTML = '<option value="">Select size</option>';
+    jerseyId.value = '';
+
+    if (!selectedName) {
+        jerseySize.disabled = true;
+        if (productInfo) {
+            productInfo.textContent = 'Select a jersey and size to see price and stock.';
         }
+        return;
+    }
 
-        hiddenId.value = selected.id;
-        quantityInput.max = selected.quantity;
-        info.textContent = 'Price: ৳' + Number(selected.price).toLocaleString() +
+    const variants = jerseyData.filter(function (item) {
+        return item.name === selectedName;
+    });
+
+    variants.forEach(function (item) {
+        const option = document.createElement('option');
+        option.value = item.size;
+        option.textContent = item.size;
+        jerseySize.appendChild(option);
+    });
+
+    jerseySize.disabled = false;
+}
+
+function updateSelectedJersey()
+{
+    const jerseyName = document.getElementById('jerseyName');
+    const jerseySize = document.getElementById('jerseySize');
+    const jerseyId = document.getElementById('jerseyId');
+    const quantity = document.getElementById('saleQuantity');
+    const productInfo = document.getElementById('productInfo');
+
+    if (!jerseyName || !jerseySize || !jerseyId) {
+        return;
+    }
+
+    const selected = jerseyData.find(function (item) {
+        return item.name === jerseyName.value && item.size === jerseySize.value;
+    });
+
+    if (!selected) {
+        jerseyId.value = '';
+        if (productInfo) {
+            productInfo.textContent = 'Select a jersey and size to see price and stock.';
+        }
+        return;
+    }
+
+    jerseyId.value = selected.id;
+
+    if (quantity) {
+        quantity.max = selected.quantity;
+    }
+
+    if (productInfo) {
+        productInfo.textContent =
+            'Price: BDT ' + Number(selected.price).toFixed(2) +
             ' | Available stock: ' + selected.quantity +
             ' | Category: ' + selected.category;
     }
-
-    nameSelect.addEventListener('change', buildSizes);
-    sizeSelect.addEventListener('change', syncVariant);
-    buildSizes();
 }
 
-function validateAddItem() {
-    const jerseyId = document.getElementById('jersey_id').value;
-    const quantity = Number(document.getElementById('sale_quantity').value);
+function validateAddProduct()
+{
+    const jerseyId = document.getElementById('jerseyId');
+    const quantity = document.getElementById('saleQuantity');
 
-    if (!jerseyId) {
+    if (!jerseyId || jerseyId.value === '') {
         alert('Please select a jersey and size.');
         return false;
     }
 
-    if (!Number.isInteger(quantity) || quantity <= 0) {
+    const qty = Number(quantity.value);
+
+    if (!Number.isInteger(qty) || qty <= 0) {
         alert('Quantity must be at least 1.');
+        return false;
+    }
+
+    if (quantity.max && qty > Number(quantity.max)) {
+        alert('Quantity cannot be greater than available stock.');
         return false;
     }
 
     return true;
 }
 
-function validateCheckout() {
-    const totalQuantity = Number(document.body.dataset.cartQuantity || 0);
+function validateProceed()
+{
+    const totalQuantity = Number(
+        document.getElementById('totalQuantityText')?.textContent || 0
+    );
 
     if (totalQuantity <= 0) {
         alert('Add at least one jersey before checkout.');
@@ -727,148 +940,167 @@ function validateCheckout() {
     return true;
 }
 
-function filterCart() {
-    const input = document.getElementById('cartSearch');
-    if (!input) return;
+function filterCart()
+{
+    const search = (document.getElementById('cartSearch')?.value || '')
+        .trim()
+        .toLowerCase();
 
-    const searchText = input.value.trim().toLowerCase();
-    const rows = Array.from(document.querySelectorAll('#cartBody .cart-row'));
-    let visible = 0;
-
-    rows.forEach(row => {
-        const show = row.dataset.name.includes(searchText);
-        row.style.display = show ? '' : 'none';
-        if (show) visible++;
+    document.querySelectorAll('.cart-item-row').forEach(function (row) {
+        const name = row.dataset.name || '';
+        row.style.display = name.includes(search) ? '' : 'none';
     });
-
-    const count = document.getElementById('visibleItemCount');
-    if (count) count.textContent = visible;
 }
 
-function sortCart(type) {
-    const tbody = document.getElementById('cartBody');
-    if (!tbody) return;
+function sortCart()
+{
+    const tableBody = document.querySelector('#cartTable tbody');
+    const sortValue = document.getElementById('cartSort')?.value || 'name_asc';
 
-    const rows = Array.from(tbody.querySelectorAll('.cart-row'));
-    if (rows.length === 0) return;
-
-    const direction = sortDirection[type];
-
-    rows.sort((a, b) => {
-        if (type === 'quantity') {
-            return (Number(a.dataset.quantity) - Number(b.dataset.quantity)) * direction;
-        }
-
-        return a.dataset.name.localeCompare(b.dataset.name) * direction;
-    });
-
-    rows.forEach(row => tbody.appendChild(row));
-    sortDirection[type] *= -1;
-}
-
-async function applyPromo() {
-    const promoInput = document.getElementById('promoInput');
-    const totalPrice = document.getElementById('totalPrice');
-    const promoMessage = document.getElementById('promoMessage');
-
-    if (!promoInput || !totalPrice || !promoMessage) return;
-
-    const code = promoInput.value.trim().toUpperCase();
-    promoInput.value = code;
-
-    if (code === '') {
-        totalPrice.value = Number(baseSubtotal).toFixed(2);
-        promoMessage.textContent = 'Enter a promo code first.';
+    if (!tableBody) {
         return;
     }
 
-    promoMessage.textContent = 'Checking promo...';
+    const rows = Array.from(tableBody.querySelectorAll('.cart-item-row'));
 
-    const body = new URLSearchParams();
-    body.append('action', 'check_promo');
-    body.append('promo_code', code);
+    if (rows.length === 0) {
+        return;
+    }
+
+    rows.sort(function (a, b) {
+        if (sortValue === 'qty_asc') {
+            return Number(a.dataset.quantity) - Number(b.dataset.quantity);
+        }
+
+        if (sortValue === 'qty_desc') {
+            return Number(b.dataset.quantity) - Number(a.dataset.quantity);
+        }
+
+        const nameA = a.dataset.name || '';
+        const nameB = b.dataset.name || '';
+
+        if (sortValue === 'name_desc') {
+            return nameB.localeCompare(nameA);
+        }
+
+        return nameA.localeCompare(nameB);
+    });
+
+    rows.forEach(function (row) {
+        tableBody.appendChild(row);
+    });
+}
+
+async function checkCustomerPhone()
+{
+    const phoneInput = document.getElementById('customerPhone');
+    const messageBox = document.getElementById('phoneMessage');
+    const customerName = document.getElementById('customerName');
+    const customerEmail = document.getElementById('customerEmail');
+
+    if (!phoneInput || !messageBox) {
+        return;
+    }
+
+    const phone = phoneInput.value.trim();
+    const phoneDigits = phone.replace(/\D/g, '');
+
+    // JavaScript validation before AJAX request.
+    if (phoneDigits.length < 10 || phoneDigits.length > 15) {
+        messageBox.className = 'phone-message error';
+        messageBox.textContent = 'Enter a valid phone number.';
+        return;
+    }
+
+    messageBox.className = 'phone-message';
+    messageBox.textContent = 'Checking customer...';
+
+    const formData = new FormData();
+    formData.append('action', 'check_phone');
+    formData.append('phone', phoneDigits);
 
     try {
-        const response = await fetch('../Controller/SalesmanController.php', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
-            },
-            body: body.toString()
-        });
+        // AJAX request without reloading the page.
+        const response = await fetch(
+            '../Controller/SalesmanController.php',
+            {
+                method: 'POST',
+                body: formData
+            }
+        );
 
+        // Controller returns JSON.
         const data = await response.json();
 
-        if (data.valid) {
-            totalPrice.value = Number(data.final_total).toFixed(2);
-            promoMessage.textContent = data.message +
-                ' Discount: ৳' + Number(data.discount_amount).toFixed(2);
+        if (!response.ok) {
+            messageBox.className = 'phone-message error';
+            messageBox.textContent = data.message || 'Phone checking failed.';
+            return;
+        }
+
+        if (data.found) {
+            if (customerName) {
+                customerName.value = data.customer_name || '';
+            }
+
+            if (customerEmail) {
+                customerEmail.value = data.customer_email || '';
+            }
+
+            messageBox.className = 'phone-message success';
+            messageBox.textContent = data.message;
         } else {
-            totalPrice.value = Number(baseSubtotal).toFixed(2);
-            promoMessage.textContent = data.message || 'Promo could not be applied.';
+            // Do not clear typed name/email automatically for a new number.
+            messageBox.className = 'phone-message';
+            messageBox.textContent = data.message;
         }
     } catch (error) {
-        totalPrice.value = Number(baseSubtotal).toFixed(2);
-        promoMessage.textContent = 'Promo check failed. Please try again.';
+        messageBox.className = 'phone-message error';
+        messageBox.textContent = 'Unable to check phone number.';
     }
 }
 
-function validatePayment(event) {
-    const clickedAction = event.submitter ? event.submitter.value : 'confirm_order';
+function validatePayment()
+{
+    const name = document.getElementById('customerName')?.value.trim() || '';
+    const phone = document.getElementById('customerPhone')?.value.trim() || '';
+    const email = document.getElementById('customerEmail')?.value.trim() || '';
+    const date = document.getElementById('purchaseDate')?.value || '';
+    const phoneDigits = phone.replace(/\D/g, '');
 
-    if (clickedAction === 'cancel_order') {
-        return true;
-    }
-
-    const totalQuantity = Number(document.getElementById('payment_quantity').value || 0);
-    const name = document.getElementById('customer_name').value.trim();
-    const phone = document.getElementById('customer_phone').value.trim();
-    const email = document.getElementById('customer_email').value.trim();
-    const purchaseDate = document.getElementById('purchase_date').value;
-
-    if (totalQuantity <= 0) {
-        alert('The order has no items.');
-        return false;
-    }
+    let message = '';
 
     if (name.length < 2) {
-        alert('Customer name must be at least 2 characters.');
-        return false;
+        message += 'Customer name must be at least 2 characters.\n';
     }
 
-    const phoneDigits = phone.replace(/\D/g, '');
     if (phoneDigits.length < 10 || phoneDigits.length > 15) {
-        alert('Enter a valid phone number.');
+        message += 'Enter a valid phone number.\n';
+    }
+
+    if (email !== '' && !/^\S+@\S+\.\S+$/.test(email)) {
+        message += 'Enter a valid email address.\n';
+    }
+
+    if (date === '') {
+        message += 'Purchase date is required.\n';
+    }
+
+    if (message !== '') {
+        alert(message);
         return false;
     }
 
-    if (email !== '' && !document.getElementById('customer_email').checkValidity()) {
-        alert('Enter a valid email address.');
-        return false;
-    }
-
-    if (purchaseDate === '') {
-        alert('Select the purchase date.');
-        return false;
-    }
-
-    return confirm('Confirm this customer order?');
+    return confirm('Confirm this order?');
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     initializeJerseySelector();
 
-    const search = document.getElementById('cartSearch');
-    if (search) search.addEventListener('input', filterCart);
+    const customerPhone = document.getElementById('customerPhone');
 
-    const promo = document.getElementById('promoInput');
-    if (promo) {
-        promo.addEventListener('input', function () {
-            const totalPrice = document.getElementById('totalPrice');
-            const promoMessage = document.getElementById('promoMessage');
-            if (totalPrice) totalPrice.value = Number(baseSubtotal).toFixed(2);
-            if (promoMessage) promoMessage.textContent = 'Click Apply promo to check this code.';
-        });
+    if (customerPhone) {
+        customerPhone.addEventListener('blur', checkCustomerPhone);
     }
 });
 </script>

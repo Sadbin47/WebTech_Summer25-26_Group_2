@@ -35,13 +35,14 @@ class JerseyModel
     public function findById(int $jerseyId): ?array
     {
         $statement = $this->connection->prepare(
-            'SELECT id, name, size, category, price, quantity
-             FROM jerseys
-             WHERE id = :id'
-        );
-        $statement->execute(['id' => $jerseyId]);
+            'SELECT id, name, size, category, price, quantity FROM jerseys WHERE id = :id');
+
+        $statement->execute([
+            'id' => $jerseyId
+        ]);
+
         $jersey = $statement->fetch();
 
         return $jersey ?: null;
-    } 
+    }
 }

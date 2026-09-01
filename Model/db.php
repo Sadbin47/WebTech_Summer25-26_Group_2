@@ -35,14 +35,11 @@ class Database
             $this->upgradeOrdersTable($connection);
             $this->createJerseysTable($connection);
             $this->createOrderItemsTable($connection);
-            $this->createPromoCodesTable($connection);
-            $this->createRestockRequestsTable($connection);
             $this->createDefaultAdmin($connection);
             $this->createDefaultManager($connection);
 
-            // Demo data so the Salesman POS can be tested before Manager module is ready.
+            // Temporary products so the Salesman POS can work while Manager is empty.
             $this->seedDemoJerseys($connection);
-            $this->seedPromoCodes($connection);
 
             return $connection;
         } catch (PDOException $exception) {
@@ -82,7 +79,9 @@ class Database
             return;
         }
 
-        $check = $connection->prepare('SELECT id FROM users WHERE username = :username');
+        $check = $connection->prepare(
+            'SELECT id FROM users WHERE username = :username'
+        );
         $check->execute(['username' => 'admin']);
 
         if (!$check->fetch()) {
@@ -99,7 +98,8 @@ class Database
         }
 
         $markSeeded = $connection->prepare(
-            'INSERT INTO app_meta (meta_key, meta_value) VALUES (:meta_key, :meta_value)'
+            'INSERT INTO app_meta (meta_key, meta_value)
+             VALUES (:meta_key, :meta_value)'
         );
         $markSeeded->execute([
             'meta_key' => 'admin_seeded',
@@ -173,7 +173,7 @@ private function createDefaultManager(PDO $connection): void
 
     private function createOrdersTable(PDO $connection): void
     {
-        // Keep the original columns so Admin/Customer code remains compatible.
+        // Original columns remain for compatibility with the shared project.
         $connection->exec(
             "CREATE TABLE IF NOT EXISTS orders (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -187,16 +187,14 @@ private function createDefaultManager(PDO $connection): void
 
     private function upgradeOrdersTable(PDO $connection): void
     {
-        // These extra columns support Salesman POS orders without removing old columns.
+        // Salesman POS columns added to the same shared orders table.
         $this->addColumnIfMissing($connection, 'orders', 'salesman_id', 'INT NULL AFTER customer_id');
         $this->addColumnIfMissing($connection, 'orders', 'customer_name', 'VARCHAR(100) NULL AFTER salesman_id');
         $this->addColumnIfMissing($connection, 'orders', 'customer_phone', 'VARCHAR(30) NULL AFTER customer_name');
         $this->addColumnIfMissing($connection, 'orders', 'customer_email', 'VARCHAR(120) NULL AFTER customer_phone');
         $this->addColumnIfMissing($connection, 'orders', 'subtotal_amount', 'DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER customer_email');
         $this->addColumnIfMissing($connection, 'orders', 'total_quantity', 'INT NOT NULL DEFAULT 0 AFTER subtotal_amount');
-        $this->addColumnIfMissing($connection, 'orders', 'discount_amount', 'DECIMAL(10,2) NOT NULL DEFAULT 0.00 AFTER total_quantity');
-        $this->addColumnIfMissing($connection, 'orders', 'promo_code', 'VARCHAR(30) NULL AFTER discount_amount');
-        $this->addColumnIfMissing($connection, 'orders', 'purchase_date', 'DATE NULL AFTER promo_code');
+        $this->addColumnIfMissing($connection, 'orders', 'purchase_date', 'DATE NULL AFTER total_quantity');
     }
 
     private function addColumnIfMissing(
@@ -251,41 +249,11 @@ private function createDefaultManager(PDO $connection): void
         );
     }
 
-    private function createPromoCodesTable(PDO $connection): void
-    {
-        $connection->exec(
-            "CREATE TABLE IF NOT EXISTS promo_codes (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                code VARCHAR(30) NOT NULL UNIQUE,
-                discount_percent DECIMAL(5,2) NOT NULL DEFAULT 0.00,
-                start_date DATE NOT NULL,
-                expiry_date DATE NOT NULL,
-                is_active TINYINT(1) NOT NULL DEFAULT 1,
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            )"
-        );
-    }
-
-    private function createRestockRequestsTable(PDO $connection): void
-    {
-        $connection->exec(
-            "CREATE TABLE IF NOT EXISTS restock_requests (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                salesman_id INT NOT NULL,
-                jersey_id INT NOT NULL,
-                requested_quantity INT NOT NULL,
-                reason VARCHAR(255) NULL,
-                status VARCHAR(20) NOT NULL DEFAULT 'Pending',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX (salesman_id),
-                INDEX (jersey_id)
-            )"
-        );
-    }
-
     private function seedDemoJerseys(PDO $connection): void
     {
-        $count = (int) $connection->query('SELECT COUNT(*) FROM jerseys')->fetchColumn();
+        $count = (int) $connection->query(
+            'SELECT COUNT(*) FROM jerseys'
+        )->fetchColumn();
 
         if ($count > 0) {
             return;
@@ -314,31 +282,6 @@ private function createDefaultManager(PDO $connection): void
                 'category' => $jersey[2],
                 'price' => $jersey[3],
                 'quantity' => $jersey[4]
-            ]);
-        }
-    }
-
-    private function seedPromoCodes(PDO $connection): void
-    {
-        $insert = $connection->prepare(
-            'INSERT IGNORE INTO promo_codes
-             (code, discount_percent, start_date, expiry_date, is_active)
-             VALUES (:code, :discount, :start_date, :expiry_date, :is_active)'
-        );
-
-        $promos = [
-            ['JT10', 10, '2026-01-01', '2030-12-31', 1],
-            ['SAVE5', 5, '2026-01-01', '2030-12-31', 1],
-            ['OLD10', 10, '2025-01-01', '2025-12-31', 1]
-        ];
-
-        foreach ($promos as $promo) {
-            $insert->execute([
-                'code' => $promo[0],
-                'discount' => $promo[1],
-                'start_date' => $promo[2],
-                'expiry_date' => $promo[3],
-                'is_active' => $promo[4]
             ]);
         }
     }
