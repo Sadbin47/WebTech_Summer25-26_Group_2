@@ -77,55 +77,76 @@ $jerseyJson = json_encode(
 
         body {
             margin: 0;
-            background: #121212;
-            color: #f1f1f1;
+            background: #f4f7fb;
+            color: #252b33;
             font-family: Arial, Helvetica, sans-serif;
         }
 
         .sales-main {
-            width: 94%;
+            width: 92%;
             max-width: 1180px;
             margin: auto;
             padding: 24px 0 45px;
         }
 
         .breadcrumb {
-            margin-bottom: 6px;
-            color: #a8a8a8;
+            margin-bottom: 7px;
+            color: #777;
             font-size: 13px;
         }
 
         h1 {
             margin: 0 0 22px;
+            color: #252b33;
             font-size: 26px;
+            font-weight: 700;
         }
 
         h2 {
-            margin: 0 0 17px;
+            margin: 0;
+            color: #252b33;
             font-size: 19px;
+            font-weight: 700;
+        }
+
+        .section-heading {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 14px;
+            margin-bottom: 18px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid #e5e8eb;
+        }
+
+        .section-heading p {
+            margin: 4px 0 0;
+            color: #777;
+            font-size: 13px;
         }
 
         .message {
             margin-bottom: 18px;
             padding: 12px 14px;
-            border: 1px solid #245d3d;
-            border-radius: 7px;
-            background: #173323;
-            color: #bce8cb;
+            border-left: 4px solid #3cb371;
+            border-radius: 6px;
+            background: #edf8f2;
+            color: #25734d;
+            font-weight: 600;
         }
 
         .message.error {
-            border-color: #813838;
-            background: #3b1d1d;
-            color: #ffbebe;
+            border-left-color: #c94b4b;
+            background: #fff0f0;
+            color: #9d3131;
         }
 
         .panel {
             margin-bottom: 24px;
-            padding: 20px;
-            border: 1px solid #353535;
-            border-radius: 12px;
-            background: #181818;
+            padding: 22px;
+            border: 1px solid #e1e5e9;
+            border-radius: 8px;
+            background: #ffffff;
         }
 
         .target-card {
@@ -134,43 +155,46 @@ $jerseyJson = json_encode(
             gap: 18px;
             align-items: center;
             margin-bottom: 24px;
-            padding: 18px 20px;
-            border: 1px solid #353535;
-            border-radius: 10px;
-            background: #181818;
+            padding: 20px 22px;
+            border: 1px solid #e1e5e9;
+            border-left: 4px solid #3cb371;
+            border-radius: 8px;
+            background: #ffffff;
         }
 
         .target-card small {
-            color: #a9a9a9;
+            color: #777;
+            font-weight: 600;
         }
 
         .target-card strong {
             display: block;
-            margin-top: 5px;
+            margin-top: 6px;
+            color: #252b33;
             font-size: 20px;
         }
 
         .progress {
             width: 100%;
-            height: 8px;
-            margin-top: 11px;
+            height: 9px;
+            margin-top: 12px;
             overflow: hidden;
             border-radius: 20px;
-            background: #303030;
+            background: #e8eeeb;
         }
 
         .progress div {
             height: 100%;
             border-radius: 20px;
-            background: #2f7edb;
+            background: #3cb371;
         }
 
         .target-percent {
             min-width: 82px;
             text-align: center;
-            color: #8dc1ff;
-            font-size: 20px;
-            font-weight: bold;
+            color: #2e8b57;
+            font-size: 21px;
+            font-weight: 700;
         }
 
         .product-form {
@@ -190,31 +214,37 @@ $jerseyJson = json_encode(
         label {
             display: block;
             margin-bottom: 6px;
-            color: #d4d4d4;
+            color: #333;
             font-size: 13px;
-            font-weight: bold;
+            font-weight: 700;
         }
 
         input,
         select {
             width: 100%;
             padding: 10px 12px;
-            border: 1px solid #3b3b3b;
-            border-radius: 7px;
-            background: #1b1b1b;
-            color: #f5f5f5;
+            border: 1px solid #cfd6dc;
+            border-radius: 5px;
+            background: #ffffff;
+            color: #252b33;
             font: inherit;
             outline: none;
         }
 
+        input::placeholder {
+            color: #9a9a9a;
+        }
+
         input:focus,
         select:focus {
-            border-color: #2f7edb;
+            border-color: #3cb371;
+            box-shadow: 0 0 0 2px rgba(60, 179, 113, .10);
         }
 
         input[readonly] {
-            background: #202020;
-            color: #ededed;
+            background: #f5f7f8;
+            color: #252b33;
+            font-weight: 600;
         }
 
         button,
@@ -224,76 +254,127 @@ $jerseyJson = json_encode(
             justify-content: center;
             min-height: 40px;
             padding: 9px 16px;
-            border: 1px solid transparent;
-            border-radius: 8px;
-            background: #2f7edb;
-            color: #fff;
-            font-weight: 600;
+            border: 1px solid #3cb371;
+            border-radius: 5px;
+            background: #3cb371;
+            color: #ffffff;
+            font-weight: 700;
             text-decoration: none;
             cursor: pointer;
+            transition: .2s ease;
         }
 
         button:hover,
         .button-link:hover {
-            filter: brightness(1.08);
+            border-color: #2e8b57;
+            background: #2e8b57;
         }
 
         button:disabled {
-            opacity: .45;
+            border-color: #a7cdb8;
+            background: #a7cdb8;
+            opacity: .75;
             cursor: not-allowed;
         }
 
         .button-outline {
-            border-color: #484848;
-            background: transparent;
-            color: #ededed;
+            border-color: #3cb371;
+            background: #ffffff;
+            color: #2e8b57;
+        }
+
+        .button-outline:hover {
+            background: #edf8f2;
+            color: #25734d;
         }
 
         .button-danger {
-            border-color: #8f2c2c;
-            background: transparent;
-            color: #ff7474;
+            border-color: #3cb371;
+            background: #ffffff;
+            color: #2e8b57;
+        }
+
+        .button-danger:hover {
+            border-color: #2e8b57;
+            background: #edf8f2;
+            color: #25734d;
         }
 
         .product-info {
             min-height: 20px;
-            margin: 4px 0 17px;
-            color: #a9a9a9;
+            margin: 5px 0 18px;
+            padding: 10px 12px;
+            border-left: 3px solid #3cb371;
+            background: #f5faf7;
+            color: #5f6a64;
             font-size: 13px;
         }
 
         .search-row {
             display: grid;
-            grid-template-columns: 1fr 190px;
+            grid-template-columns: 1fr 220px;
             gap: 12px;
-            margin: 14px 0;
+            margin: 16px 0;
         }
 
         .table-wrap {
             overflow-x: auto;
+            border: 1px solid #e1e5e9;
+            border-radius: 7px;
+            background: #ffffff;
         }
 
-        table {
+        .data-table {
             width: 100%;
             border-collapse: collapse;
+            min-width: 760px;
         }
 
-        th,
-        td {
-            padding: 13px 10px;
-            border-bottom: 1px solid #333;
+        .data-table th,
+        .data-table td {
+            padding: 13px 14px;
+            border-bottom: 1px solid #e5e8eb;
             text-align: left;
             vertical-align: middle;
         }
 
-        th {
-            color: #a8a8a8;
+        .data-table th {
+            background: #f6f8f9;
+            color: #2f3a35;
             font-size: 12px;
+            font-weight: 700;
             text-transform: uppercase;
+            letter-spacing: .2px;
+            white-space: nowrap;
         }
 
-        td {
+        .data-table td {
+            color: #38413d;
             font-size: 14px;
+        }
+
+        .data-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .data-table tbody tr:hover {
+            background: #f8fcfa;
+        }
+
+        .keyword {
+            color: #252b33;
+            font-weight: 700;
+        }
+
+        .muted-text {
+            color: #777;
+            font-size: 12px;
+        }
+
+        .money {
+            color: #24734c;
+            font-weight: 700;
+            white-space: nowrap;
         }
 
         .qty-form {
@@ -304,6 +385,7 @@ $jerseyJson = json_encode(
 
         .qty-form input {
             width: 74px;
+            min-width: 74px;
         }
 
         .qty-form button {
@@ -314,51 +396,64 @@ $jerseyJson = json_encode(
         .order-summary {
             display: flex;
             justify-content: flex-end;
-            gap: 28px;
+            gap: 16px;
             margin-top: 18px;
-            padding-top: 15px;
-            border-top: 1px solid #333;
+            padding-top: 16px;
+            border-top: 1px solid #e5e8eb;
+        }
+
+        .summary-total {
+            min-width: 170px;
+            padding: 14px 16px;
+            border: 1px solid #e1e5e9;
+            border-radius: 7px;
+            background: #f8fbf9;
         }
 
         .order-summary span {
-            color: #aaa;
+            color: #777;
             font-size: 12px;
+            font-weight: 600;
         }
 
         .order-summary strong {
             display: block;
             margin-top: 5px;
-            font-size: 19px;
+            color: #252b33;
+            font-size: 20px;
         }
 
         .checkout-row {
             display: flex;
             justify-content: flex-end;
-            margin-top: 18px;
+            margin-top: 16px;
         }
 
         .payment-summary {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 12px;
-            margin-top: 16px;
+            margin-top: 18px;
         }
 
         .summary-box {
-            padding: 14px;
-            border: 1px solid #333;
-            border-radius: 8px;
-            background: #202020;
+            padding: 15px 16px;
+            border: 1px solid #e1e5e9;
+            border-left: 4px solid #3cb371;
+            border-radius: 7px;
+            background: #f8fbf9;
         }
 
         .summary-box span {
             display: block;
             margin-bottom: 5px;
-            color: #9e9e9e;
+            color: #777;
             font-size: 12px;
+            font-weight: 600;
         }
 
         .summary-box strong {
+            color: #252b33;
             font-size: 20px;
         }
 
@@ -371,34 +466,41 @@ $jerseyJson = json_encode(
         .phone-message {
             min-height: 18px;
             margin-top: 6px;
-            color: #999;
+            color: #777;
             font-size: 12px;
+            font-weight: 600;
         }
 
         .phone-message.success {
-            color: #62c990;
+            color: #2e8b57;
         }
 
         .phone-message.error {
-            color: #ff7474;
+            color: #c94b4b;
         }
 
         .status {
             display: inline-block;
-            padding: 5px 9px;
+            padding: 5px 10px;
+            border: 1px solid #a7d8be;
             border-radius: 20px;
-            background: #2a3544;
-            color: #9bc5ff;
+            background: #edf8f2;
+            color: #25734d;
             font-size: 12px;
+            font-weight: 700;
         }
 
         .empty {
-            padding: 24px 10px;
-            color: #999;
-            text-align: center;
+            padding: 26px 10px !important;
+            color: #777 !important;
+            text-align: center !important;
         }
 
         @media (max-width: 760px) {
+            .sales-main {
+                width: 95%;
+            }
+
             .product-form,
             .customer-grid,
             .payment-summary,
@@ -417,6 +519,10 @@ $jerseyJson = json_encode(
             .order-summary,
             .payment-actions {
                 flex-direction: column;
+            }
+
+            .summary-total {
+                width: 100%;
             }
         }
     </style>
@@ -458,7 +564,12 @@ $jerseyJson = json_encode(
         </section>
 
         <section class="panel" id="sale">
-            <h2>Select Jersey</h2>
+            <div class="section-heading">
+                <div>
+                    <h2>Select Jersey</h2>
+                    <p>Choose a jersey, size and quantity to build the current order.</p>
+                </div>
+            </div>
 
             <form
                 class="product-form"
@@ -524,7 +635,7 @@ $jerseyJson = json_encode(
             </div>
 
             <div class="table-wrap">
-                <table id="cartTable">
+                <table id="cartTable" class="data-table">
                     <thead>
                         <tr>
                             <th>Jersey Name</th>
@@ -549,7 +660,7 @@ $jerseyJson = json_encode(
                                 data-name="<?php echo htmlspecialchars(strtolower($item['name'])); ?>"
                                 data-quantity="<?php echo (int) $item['quantity']; ?>"
                             >
-                                <td><?php echo htmlspecialchars($item['name']); ?></td>
+                                <td><span class="keyword"><?php echo htmlspecialchars($item['name']); ?></span></td>
                                 <td><?php echo htmlspecialchars($item['size']); ?></td>
                                 <td>
                                     <form
@@ -570,8 +681,8 @@ $jerseyJson = json_encode(
                                         <button type="submit" class="button-outline">Update</button>
                                     </form>
                                 </td>
-                                <td>BDT <?php echo number_format((float) $item['unit_price'], 2); ?></td>
-                                <td>BDT <?php echo number_format((float) $item['subtotal'], 2); ?></td>
+                                <td><span class="money">BDT <?php echo number_format((float) $item['unit_price'], 2); ?></span></td>
+                                <td><span class="money">BDT <?php echo number_format((float) $item['subtotal'], 2); ?></span></td>
                                 <td>
                                     <form method="POST" action="../Controller/SalesmanController.php">
                                         <input type="hidden" name="action" value="remove_item">
@@ -587,13 +698,13 @@ $jerseyJson = json_encode(
             </div>
 
             <div class="order-summary">
-                <div>
+                <div class="summary-total">
                     <span>Total Jerseys</span>
                     <strong id="totalQuantityText">
                         <?php echo (int) $cartSummary['total_quantity']; ?>
                     </strong>
                 </div>
-                <div>
+                <div class="summary-total">
                     <span>Total Price</span>
                     <strong>
                         BDT <?php echo number_format((float) $cartSummary['subtotal'], 2); ?>
@@ -619,9 +730,14 @@ $jerseyJson = json_encode(
         </section>
 
         <section class="panel" id="history">
-            <h2>Sales History</h2>
+            <div class="section-heading">
+                <div>
+                    <h2>Sales History</h2>
+                    <p>Review your previously confirmed sales records.</p>
+                </div>
+            </div>
             <div class="table-wrap">
-                <table>
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>Order</th>
@@ -641,14 +757,14 @@ $jerseyJson = json_encode(
                     <?php else: ?>
                         <?php foreach ($salesHistory as $sale): ?>
                             <tr>
-                                <td>#<?php echo (int) $sale['id']; ?></td>
+                                <td><span class="keyword">#<?php echo (int) $sale['id']; ?></span></td>
                                 <td>
-                                    <?php echo htmlspecialchars($sale['customer_name'] ?? ''); ?><br>
-                                    <small><?php echo htmlspecialchars($sale['customer_phone'] ?? ''); ?></small>
+                                    <span class="keyword"><?php echo htmlspecialchars($sale['customer_name'] ?? ''); ?></span><br>
+                                    <span class="muted-text"><?php echo htmlspecialchars($sale['customer_phone'] ?? ''); ?></span>
                                 </td>
                                 <td><?php echo htmlspecialchars($sale['purchased_jerseys'] ?? ''); ?></td>
                                 <td><?php echo (int) $sale['total_quantity']; ?></td>
-                                <td>BDT <?php echo number_format((float) $sale['total_amount'], 2); ?></td>
+                                <td><span class="money">BDT <?php echo number_format((float) $sale['total_amount'], 2); ?></span></td>
                                 <td><?php echo htmlspecialchars($sale['purchase_date'] ?? $sale['created_at']); ?></td>
                                 <td><span class="status"><?php echo htmlspecialchars($sale['status']); ?></span></td>
                             </tr>
@@ -665,7 +781,12 @@ $jerseyJson = json_encode(
 
         <?php if ((int) $cartSummary['total_quantity'] > 0): ?>
             <section class="panel">
-                <h2>Customer Information</h2>
+                <div class="section-heading">
+                    <div>
+                        <h2>Customer Information</h2>
+                        <p>Enter customer details and review the order total before confirmation.</p>
+                    </div>
+                </div>
 
                 <form
                     id="paymentForm"
@@ -756,10 +877,15 @@ $jerseyJson = json_encode(
         <?php endif; ?>
 
         <section class="panel" id="confirmed-orders">
-            <h2>Confirmed Orders</h2>
+            <div class="section-heading">
+                <div>
+                    <h2>Confirmed Orders</h2>
+                    <p>Customer and order details saved from completed sales.</p>
+                </div>
+            </div>
 
             <div class="table-wrap">
-                <table>
+                <table class="data-table">
                     <thead>
                         <tr>
                             <th>Customer Name</th>
@@ -780,12 +906,12 @@ $jerseyJson = json_encode(
                     <?php else: ?>
                         <?php foreach ($salesHistory as $sale): ?>
                             <tr>
-                                <td><?php echo htmlspecialchars($sale['customer_name'] ?? ''); ?></td>
+                                <td><span class="keyword"><?php echo htmlspecialchars($sale['customer_name'] ?? ''); ?></span></td>
                                 <td><?php echo htmlspecialchars($sale['customer_phone'] ?? ''); ?></td>
                                 <td><?php echo htmlspecialchars($sale['customer_email'] ?? ''); ?></td>
                                 <td><?php echo htmlspecialchars($sale['purchased_jerseys'] ?? ''); ?></td>
                                 <td><?php echo (int) $sale['total_quantity']; ?></td>
-                                <td>BDT <?php echo number_format((float) $sale['total_amount'], 2); ?></td>
+                                <td><span class="money">BDT <?php echo number_format((float) $sale['total_amount'], 2); ?></span></td>
                                 <td><?php echo htmlspecialchars($sale['purchase_date'] ?? $sale['created_at']); ?></td>
                                 <td><span class="status"><?php echo htmlspecialchars($sale['status']); ?></span></td>
                             </tr>
