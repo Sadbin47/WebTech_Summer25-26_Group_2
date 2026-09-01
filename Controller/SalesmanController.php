@@ -224,29 +224,6 @@ try {
         returnToSalesman('Current transaction cancelled.', false, 'sale', 'sale');
     }
 
-    if ($action === 'request_restock') {
-        $jerseyId = (int) ($_POST['jersey_id'] ?? 0);
-        $requestedQuantity = (int) ($_POST['requested_quantity'] ?? 0);
-        $reason = trim($_POST['reason'] ?? '');
-        $jersey = $jerseyModel->findById($jerseyId);
-
-        if (!$jersey || $requestedQuantity <= 0) {
-            returnToSalesman('Select a valid jersey and restock quantity.', true, 'sale', 'restock');
-        }
-
-        if (strlen($reason) > 255) {
-            returnToSalesman('Restock reason must be within 255 characters.', true, 'sale', 'restock');
-        }
-
-        $jerseyModel->createRestockRequest(
-            (int) $_SESSION['user_id'],
-            $jerseyId,
-            $requestedQuantity,
-            $reason
-        );
-
-        returnToSalesman('Restock request submitted.', false, 'sale', 'restock');
-    }
 } catch (InvalidArgumentException | RuntimeException $exception) {
     $page = in_array($action, ['confirm_order', 'check_promo'], true) ? 'payment' : 'sale';
 

@@ -34,9 +34,7 @@ if ($page === 'payment' && (int) $cartSummary['total_quantity'] <= 0 && !$confir
 }
 
 $availableJerseys = $jerseyModel->getAvailableJerseys();
-$allJerseys = $jerseyModel->getAllJerseys();
 $salesHistory = $orderModel->getSalesmanOrders((int) $_SESSION['user_id']);
-$restockRequests = $jerseyModel->getRestockRequestsBySalesman((int) $_SESSION['user_id']);
 $monthlySales = $orderModel->getMonthlySalesBySalesman((int) $_SESSION['user_id']);
 
 $monthlyTarget = 100000.00;
@@ -351,13 +349,6 @@ $jerseyJson = json_encode(
         .small-text { color: #999; font-size: 12px; }
         .status { font-weight: bold; color: #ffcf73; }
 
-        .restock-form {
-            display: grid;
-            grid-template-columns: 2fr 1fr 2fr auto;
-            gap: 10px;
-            align-items: end;
-        }
-
         .section-heading {
             display: flex;
             align-items: center;
@@ -368,10 +359,9 @@ $jerseyJson = json_encode(
         .section-heading a { color: #8dc1ff; text-decoration: none; font-size: 13px; }
 
         @media (max-width: 800px) {
-            .product-form, .restock-form, .two-column {
-                grid-template-columns: 1fr;
-            }
-
+            .product-form, .two-column {
+    grid-template-columns: 1fr;
+}
             .field-full { grid-column: auto; }
             .order-total { grid-template-columns: 1fr 1fr; }
         }
@@ -552,53 +542,7 @@ $jerseyJson = json_encode(
                     </tbody>
                 </table>
             </div>
-        </section>
-
-        <section class="panel" id="restock">
-            <h2>Request restocking</h2>
-            <form class="restock-form" method="POST" action="../Controller/SalesmanController.php" onsubmit="return validateRestock()">
-                <input type="hidden" name="action" value="request_restock">
-                <div>
-                    <label for="restock_jersey">Jersey</label>
-                    <select id="restock_jersey" name="jersey_id" required>
-                        <option value="">Select jersey</option>
-                        <?php foreach ($allJerseys as $jersey): ?>
-                            <option value="<?php echo (int) $jersey['id']; ?>">
-                                <?php echo htmlspecialchars($jersey['name'] . ' - ' . $jersey['size'] . ' (Stock: ' . $jersey['quantity'] . ')'); ?>
-                            </option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <div>
-                    <label for="requested_quantity">Requested Qty</label>
-                    <input id="requested_quantity" type="number" name="requested_quantity" min="1" value="1" required>
-                </div>
-                <div>
-                    <label for="reason">Reason</label>
-                    <input id="reason" type="text" name="reason" maxlength="255" placeholder="Low stock / customer demand">
-                </div>
-                <button type="submit">Send request</button>
-            </form>
-
-            <?php if ($restockRequests): ?>
-                <div class="table-wrap" style="margin-top: 18px;">
-                    <table>
-                        <thead><tr><th>Jersey</th><th>Qty</th><th>Reason</th><th>Status</th><th>Requested</th></tr></thead>
-                        <tbody>
-                        <?php foreach ($restockRequests as $request): ?>
-                            <tr>
-                                <td><?php echo htmlspecialchars($request['jersey_name'] . ' - ' . $request['size']); ?></td>
-                                <td><?php echo (int) $request['requested_quantity']; ?></td>
-                                <td><?php echo htmlspecialchars($request['reason'] ?? 'N/A'); ?></td>
-                                <td><span class="status"><?php echo htmlspecialchars($request['status']); ?></span></td>
-                                <td><?php echo htmlspecialchars($request['created_at']); ?></td>
-                            </tr>
-                        <?php endforeach; ?>
-                        </tbody>
-                    </table>
-                </div>
-            <?php endif; ?>
-        </section>
+        </section>       
 
     <?php else: ?>
         <div class="breadcrumb">Salesman dashboard / New order / Payment</div>
@@ -777,18 +721,6 @@ function validateCheckout() {
 
     if (totalQuantity <= 0) {
         alert('Add at least one jersey before checkout.');
-        return false;
-    }
-
-    return true;
-}
-
-function validateRestock() {
-    const jersey = document.getElementById('restock_jersey').value;
-    const quantity = Number(document.getElementById('requested_quantity').value);
-
-    if (!jersey || !Number.isInteger(quantity) || quantity <= 0) {
-        alert('Select a jersey and enter a valid restock quantity.');
         return false;
     }
 
