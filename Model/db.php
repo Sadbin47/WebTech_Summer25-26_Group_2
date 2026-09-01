@@ -36,7 +36,6 @@ class Database
             $this->createJerseysTable($connection);
             $this->createOrderItemsTable($connection);
             $this->createPromoCodesTable($connection);
-            $this->createRestockRequestsTable($connection);
             $this->createDefaultAdmin($connection);
 
             // Demo data so the Salesman POS can be tested before Manager module is ready.
@@ -217,24 +216,6 @@ class Database
             )"
         );
     }
-
-    private function createRestockRequestsTable(PDO $connection): void
-    {
-        $connection->exec(
-            "CREATE TABLE IF NOT EXISTS restock_requests (
-                id INT AUTO_INCREMENT PRIMARY KEY,
-                salesman_id INT NOT NULL,
-                jersey_id INT NOT NULL,
-                requested_quantity INT NOT NULL,
-                reason VARCHAR(255) NULL,
-                status VARCHAR(20) NOT NULL DEFAULT 'Pending',
-                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-                INDEX (salesman_id),
-                INDEX (jersey_id)
-            )"
-        );
-    }
-
     private function seedDemoJerseys(PDO $connection): void
     {
         $count = (int) $connection->query('SELECT COUNT(*) FROM jerseys')->fetchColumn();
