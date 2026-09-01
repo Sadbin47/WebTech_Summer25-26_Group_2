@@ -1,29 +1,28 @@
-<?php header("Content-type: text/css"); ?>
+<?php header('Content-Type: text/css'); ?>
+
+* {
+    box-sizing: border-box;
+}
 
 body {
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
     margin: 0;
+    background: #f2f2f2;
+    color: #222222;
+    font-family: Arial, sans-serif;
+    text-align: center;
 }
 
 h2 {
-    color: #ffffff;
-    text-shadow: 0 2px 4px rgba(0,0,0,0.2);
-    margin-bottom: 20px;
+    margin: 35px 0 15px;
 }
 
 form {
-    background: rgba(255, 255, 255, 0.95);
-    padding: 30px 40px;
-    border-radius: 12px;
-    box-shadow: 0 8px 32px rgba(0,0,0,0.3);
-    width: 100%;
-    max-width: 450px;
+    width: 420px;
+    margin: 0 auto;
+    padding: 20px;
+    border: 1px solid #cccccc;
+    background: #ffffff;
+    text-align: left;
 }
 
 table {
@@ -32,8 +31,7 @@ table {
 }
 
 td {
-    padding: 10px 0;
-    vertical-align: middle;
+    padding: 8px 4px;
 }
 
 td:first-child {
@@ -41,84 +39,55 @@ td:first-child {
 }
 
 label {
-    font-weight: 600;
     font-size: 14px;
-    color: #333333;
+    font-weight: bold;
 }
 
 input[type="text"],
 input[type="email"],
 input[type="password"],
-select,
-input[type="file"] {
+select {
     width: 100%;
-    padding: 10px;
-    border: 1px solid #cccccc;
-    border-radius: 6px;
-    box-sizing: border-box;
-    font-size: 14px;
-    transition: border-color 0.3s;
-}
-
-input[type="text"]:focus,
-input[type="email"]:focus,
-input[type="password"]:focus,
-select:focus {
-    border-color: #667eea;
-    outline: none;
-    box-shadow: 0 0 5px rgba(102, 126, 234, 0.5);
+    padding: 8px;
+    border: 1px solid #aaaaaa;
 }
 
 input[type="checkbox"] {
-    margin-right: 8px;
-    transform: scale(1.2);
+    margin-right: 5px;
 }
 
-button[type="submit"],
-input[type="submit"] {
-    background: #667eea;
-    color: #ffffff;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
-    cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-    width: 48%;
-}
-
-button[type="submit"]:hover,
-input[type="submit"]:hover {
-    background: #764ba2;
-}
-
+button,
+input[type="submit"],
 input[type="reset"] {
-    background: #e2e8f0;
-    color: #4a5568;
-    border: none;
-    padding: 12px 20px;
-    border-radius: 6px;
+    margin-right: 5px;
+    padding: 8px 15px;
+    border: 1px solid #555555;
+    background: #eeeeee;
+    color: #222222;
     cursor: pointer;
-    font-weight: bold;
-    transition: background 0.3s;
-    width: 48%;
-    float: right;
 }
 
-input[type="reset"]:hover {
-    background: #cbd5e0;
+button,
+input[type="submit"] {
+    background: #28795c;
+    color: #ffffff;
 }
 
 a {
-    color: #ffffff;
-    text-decoration: none;
-    font-weight: bold;
-    margin-top: 15px;
-    display: inline-block;
-    transition: opacity 0.3s;
+    color: #245a45;
 }
 
-a:hover {
-    opacity: 0.8;
-    text-decoration: underline;
+.message {
+    width: 420px;
+    margin: 0 auto 15px;
+    padding: 10px;
+    color: #ffffff;
+}
+
+.error {
+    background: #b94747;
+}
+
+.success {
+    background: #28795c;
 }
