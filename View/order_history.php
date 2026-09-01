@@ -1,46 +1,39 @@
 <?php
-// View/order_history.php
+
 session_start();
-$orderHistory = $_SESSION['orderHistory'] ?? [
-    [
-        'order_id' => 'ORD001',
-        'date' => '2026-08-10',
-        'total' => 1100,
-        'payment_method' => 'Cash on Delivery',
-        'status' => 'Delivered'
-    ]
-];
+
+require_once '../Model/db.php';
+require_once '../Controller/CustomerController.php';
+
+if (($_SESSION['role'] ?? '') !== 'Customer') {
+    header('Location: login.php');
+    exit;
+}
+
+$database = new Database();
+$customerController = new CustomerController($database->connect());
+
+$orders = $customerController->orderHistory($_SESSION['user_id']);
+
+include 'header.php';
+
 ?>
+
 <!DOCTYPE html>
 <html lang="en-US">
+
 <head>
     <meta charset="UTF-8">
     <title>Order History</title>
+
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
         body {
-            font-family: Arial, sans-serif;
+            margin: 0;
             background: #121212;
-            color: #fff;
-        }
-        header {
-            background: #1e1e1e;
-            padding: 18px 40px;
-            display: flex;
-            justify-content: space-between;
-            border-bottom: 1px solid #333;
-        }
-        .logout {
             color: white;
-            text-decoration: none;
-            background: #dc3545;
-            padding: 8px 16px;
-            border-radius: 5px;
+            font-family: Arial, sans-serif;
         }
+
         .container {
             width: 90%;
             max-width: 800px;
@@ -48,14 +41,14 @@ $orderHistory = $_SESSION['orderHistory'] ?? [
             background: #1e1e1e;
             padding: 25px;
             border-radius: 8px;
-            border: 1px solid #2a2a2a;
         }
+
         .order-list {
-            list-style: none;
             display: flex;
             flex-direction: column;
             gap: 10px;
         }
+
         .order-item {
             display: flex;
             justify-content: space-between;
@@ -64,62 +57,89 @@ $orderHistory = $_SESSION['orderHistory'] ?? [
             background: #252525;
             border-radius: 6px;
         }
+
         .status {
             padding: 4px 10px;
             border-radius: 12px;
             font-size: 12px;
         }
-        .delivered {
-            background: #198754;
-            color: #fff;
-        }
+
         .processing {
             background: #ffc107;
             color: #000;
         }
-        .btn-back {
-            display: inline-block;
-            margin-top: 20px;
-            color: #0d6efd;
-            text-decoration: none;
+
+        .delivered {
+            background: #198754;
+            color: white;
+        }
+
+        .cancelled {
+            background: #dc3545;
+            color: white;
         }
     </style>
 </head>
+
 <body>
-<header>
-    <h1>Order History</h1>
-    <a href="customer_dashboard.php?action=logout" class="logout">Logout</a>
-</header>
+
 <div class="container">
-    <h2>Your Past Orders</h2>
-    <?php if (!empty($orderHistory)): ?>
-        <ul class="order-list">
-            <?php foreach ($orderHistory as $order): ?>
-                <li class="order-item">
+
+    <h1>Order History</h1>
+
+    <?php if (!empty($orders)): ?>
+
+        <div class="order-list">
+
+            <?php foreach ($orders as $order): ?>
+
+                <div class="order-item">
+
                     <div>
-                        <h4>Order #<?php echo htmlspecialchars($order['order_id']);
-                        ?></h4>
-                        <p style="color: #aaa; font-size: 13px;">Date: <?php echo htmlspecialchars($order['date']);
-                        ?></p>
-                        <p style="color: #aaa; font-size: 13px;">Method: <?php echo htmlspecialchars($order['payment_method'] ?? 'N/A');
-                        ?></p>
+
+                        <h3>
+                            Order #<?php echo htmlspecialchars($order['id']); ?>
+                        </h3>
+
+                        <p>
+                            Date:
+                            <?php echo htmlspecialchars($order['created_at']); ?>
+                        </p>
+
+                        <p>
+                            Quantity:
+                            <?php echo htmlspecialchars($order['total_quantity']); ?>
+                        </p>
+
                     </div>
+
                     <div>
-                        <span style="font-weight: bold; margin-right: 15px;">৳<?php echo number_format($order['total'], 2);
-                        ?></span>
-                        <span class="status <?php echo strtolower($order['status']);
-                        ?>">
-                            <?php echo htmlspecialchars($order['status']);
-                            ?>
+
+                        <strong>
+                            ৳<?php echo number_format($order['total_amount'], 2); ?>
+                        </strong>
+
+                        <br><br>
+
+                        <span class="status <?php echo strtolower($order['status']); ?>">
+                            <?php echo htmlspecialchars($order['status']); ?>
                         </span>
+
                     </div>
-                </li>
+
+                </div>
+
             <?php endforeach; ?>
-        </ul>
+
+        </div>
+
     <?php else: ?>
-        <p style="color: #aaa;">No previous orders found.</p>
+
+        <p>No previous orders found.</p>
+
     <?php endif; ?>
-    <a href="customer_dashboard.php" class="btn-back">← Back to Dashboard</a>
+
 </div>
+
 </body>
 </html>

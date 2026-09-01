@@ -30,10 +30,8 @@ if ($headerRole === 'Admin') {
 } elseif ($headerRole === 'Customer') {
     $homePage = 'customer_dashboard.php';
     $menu = [
-        'Products' => 'customer_dashboard.php#products',
-        'Cart' => 'customer_dashboard.php#cart',
-        'Checkout' => 'customer_dashboard.php#checkout',
-        'Orders' => 'customer_dashboard.php#orders'
+        'Products' => 'customer_dashboard.php',
+        'Orders' => 'order_history.php'
     ];
 } else {
     $homePage = 'login.php';
