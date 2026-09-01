@@ -39,127 +39,89 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f5f5f5;
+            background: #f4f4f4;
             color: #333333;
         }
 
         .main {
-            width: 1000px;
+            width: 920px;
             margin: 25px auto;
         }
 
         .welcome {
             margin-bottom: 20px;
-            padding: 18px;
-            border-bottom: 4px solid #28795c;
-            background: #ffffff;
-            color: #245a45;
-            overflow: hidden;
-        }
-
-        .welcome h1,
-        .welcome p { margin: 0 0 5px; }
-
-        .welcome p { color: #666666; }
-
-        .welcome-badge {
-            float: right;
-            padding: 10px 14px;
-            background: #28795c;
+            padding: 20px;
+            border-bottom: 5px solid #e5a0aa;
+            background: #8b1e2d;
             color: #ffffff;
-            font-size: 22px;
-            font-weight: bold;
         }
 
-        .stats,
-        .quick-links { margin-bottom: 18px; }
+        .welcome h1 { margin: 0 0 8px; }
+        .welcome p { margin: 0; color: #f8dce1; }
 
-        .stat,
-        .quick-link {
+        .stats { margin-bottom: 20px; }
+
+        .stat {
             display: inline-block;
             width: 32%;
-            min-height: 85px;
             margin-right: 1%;
-            padding: 14px;
-            border: 1px solid #d2d2d2;
+            min-height: 135px;
+            padding: 22px;
+            border: 1px solid #ead1d5;
             background: #ffffff;
             vertical-align: top;
+            text-align: left;
         }
 
-        .stat:last-child,
-        .quick-link:last-child { margin-right: 0; }
-
-        .stat { text-align: center; }
-
-        .stat span,
-        .quick-link span,
-        .user small {
-            color: #666666;
-            font-size: 13px;
-        }
-
-        .stat strong,
-        .quick-link strong {
-            display: block;
-            margin-top: 6px;
-            color: #333333;
-            font-size: 19px;
-        }
-
-        .quick-link {
-            color: #333333;
-            text-decoration: none;
-        }
-
-        .quick-link:hover { background: #f7f7f7; }
+        .stat span { color: #765b60; font-size: 14px; }
+        .stat strong { display: block; margin-top: 10px; color: #8b1e2d; font-size: 25px; }
+        .stat-detail { margin: 12px 0 0; color: #765b60; font-size: 13px; line-height: 1.4; }
+        .user small { color: #765b60; font-size: 13px; }
 
         .panel {
-            margin-bottom: 15px;
-            padding: 18px;
-            border: 1px solid #d2d2d2;
+            margin-bottom: 20px;
+            padding: 20px;
+            border: 1px solid #ead1d5;
             background: #ffffff;
         }
 
-        .panel h2,
-        .panel h3 { margin-top: 0; color: #333333; }
+        .panel h2, .panel h3 { margin-top: 0; color: #8b1e2d; }
 
         .message {
             margin-bottom: 15px;
             padding: 10px;
-            background: #dff3e8;
-            color: #17633f;
+            background: #fde8ec;
+            color: #8b1e2d;
         }
 
         .message.error {
-            background: #f8dddd;
-            color: #8c3030;
+            background: #f8d7da;
+            color: #842029;
         }
 
         .user {
-            margin-bottom: 8px;
-            padding: 10px;
-            border-bottom: 1px solid #dddddd;
+            margin-bottom: 10px;
+            padding: 10px 0;
+            border-bottom: 1px solid #ead1d5;
             overflow: hidden;
         }
 
-        .user-actions { float: right; }
+        .user-actions {
+            float: right;
+            width: 350px;
+        }
 
         .user-actions form { display: inline-block; margin-left: 5px; }
 
         form { margin: 0; }
 
-        label {
-            display: block;
-            margin: 8px 0 4px;
-            font-size: 13px;
-            font-weight: bold;
-        }
+        label { display: block; margin: 8px 0 4px; font-size: 13px; font-weight: bold; }
 
         input,
         select {
             width: 100%;
             padding: 7px;
-            border: 1px solid #bbbbbb;
+            border: 1px solid #d9aab2;
             background: #ffffff;
         }
 
@@ -167,35 +129,29 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
 
         button {
             margin-top: 8px;
-            padding: 7px 11px;
+            padding: 8px 14px;
             border: 0;
-            background: #28795c;
+            background: #b42336;
             color: #ffffff;
             cursor: pointer;
         }
 
         .user-actions button { margin-top: 0; }
+        button:hover { background: #8f1d2b; }
 
-        button:hover { background: #1d6248; }
+        .danger { background: #7f1d1d; }
+        .danger:hover { background: #5f1515; }
 
-        .danger { background: #b94747; }
-
-        .danger:hover { background: #913737; }
-
-        .add-user { margin-top: 18px; padding-top: 18px; border-top: 1px solid #dddddd; }
+        .add-user { margin-top: 18px; padding-top: 18px; border-top: 1px solid #ead1d5; }
 
         .add-user div,
         .sub-panel {
             display: inline-block;
-            width: 48%;
-            margin-right: 2%;
+            width: 49%;
             vertical-align: top;
         }
 
-        .add-user div:last-child,
-        .sub-panel:nth-child(even) { margin-right: 0; }
-
-        .profile-info { margin-bottom: 12px; line-height: 1.5; }
+        .profile-info { margin-bottom: 12px; }
     </style>
 </head>
 <body>
@@ -207,17 +163,11 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
         <?php if ($section === 'dashboard'): ?>
             <section class="welcome">
                 <div><h1>Admin Dashboard</h1><p>Welcome back, <?php echo $adminName; ?>. Manage JerseyTrack from here.</p></div>
-                <div class="welcome-badge">JT</div>
             </section>
             <div class="stats">
-                <div class="stat"><span>Registered Users</span><strong><?php echo count($users); ?></strong></div>
-                <div class="stat"><span>Admin Account</span><strong>Active</strong></div>
-                <div class="stat"><span>Revenue This Month</span><strong>BDT <?php echo number_format((float) $revenue['monthly_revenue'], 0); ?></strong></div>
-            </div>
-            <div class="quick-links">
-                <a class="quick-link" href="admin_dashboard.php?section=users"><strong>Manage Users</strong><span>View, add, change roles, or delete users.</span></a>
-                <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Settings & Account</strong><span>Edit your profile, password, and system settings.</span></a>
-                <a class="quick-link" href="admin_dashboard.php?section=settings"><strong>Revenue</strong><span><?php echo (int) $revenue['order_count']; ?> orders recorded. Total: BDT <?php echo number_format((float) $revenue['total_revenue'], 0); ?>.</span></a>
+                <div class="stat"><span>Registered Users</span><strong><?php echo count($users); ?></strong><p class="stat-detail">Total accounts currently registered in the JerseyTrack system.</p></div>
+                <div class="stat"><span>Admin Account</span><strong>Active</strong><p class="stat-detail">Your administrator account is active and ready to manage the system.</p></div>
+                <div class="stat"><span>Revenue This Month</span><strong>BDT <?php echo number_format((float) $revenue['monthly_revenue'], 0); ?></strong><p class="stat-detail"><?php echo (int) $revenue['order_count']; ?> orders recorded with cancelled orders excluded from revenue.</p></div>
             </div>
 
         <?php elseif ($section === 'users'): ?>
