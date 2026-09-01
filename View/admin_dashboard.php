@@ -120,7 +120,7 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
                                         <?php foreach (['Admin', 'Manager', 'Salesman', 'Customer'] as $role): ?><option value="<?php echo $role; ?>" <?php echo $user['role'] === $role ? 'selected' : ''; ?>><?php echo $role; ?></option><?php endforeach; ?>
                                     </select><button type="submit">Save Role</button>
                                 </form>
-                                <form method="POST" action="../Controller/AdminController.php" onsubmit="return confirm('Delete this user?');">
+                                <form method="POST" action="../Controller/AdminController.php" data-confirm="Delete this user?">
                                     <input type="hidden" name="action" value="delete_user"><input type="hidden" name="user_id" value="<?php echo (int) $user['id']; ?>"><button class="danger" type="submit">Delete</button>
                                 </form>
                             </div>
@@ -152,10 +152,47 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
                 </section>
                 <section class="panel sub-panel">
                     <h2>Delete Profile</h2><p>This permanently removes your Admin account from the database.</p>
-                    <form method="POST" action="../Controller/AdminController.php" onsubmit="return confirm('Delete your Admin profile permanently?');"><input type="hidden" name="action" value="delete_profile"><label for="delete_password">Confirm Password</label><input id="delete_password" type="password" name="password" required><button class="danger" type="submit">Delete Profile</button></form>
+                    <form method="POST" action="../Controller/AdminController.php" data-confirm="Delete your Admin profile permanently?"><input type="hidden" name="action" value="delete_profile"><label for="delete_password">Confirm Password</label><input id="delete_password" type="password" name="password" required><button class="danger" type="submit">Delete Profile</button></form>
                 </section>
             </div>
         <?php endif; ?>
     </main>
 </body>
+<script>
+    document.querySelectorAll('form[action*="AdminController.php"]').forEach(function (form) {
+        form.addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            if (form.dataset.confirm && !confirm(form.dataset.confirm)) {
+                return;
+            }
+
+            const button = form.querySelector('button[type="submit"]');
+            if (button) button.disabled = true;
+
+            const data = new FormData(form);
+            data.append('ajax', '1');
+
+            try {
+                const response = await fetch(form.action, {
+                    method: 'POST',
+                    body: data,
+                    headers: { 'X-Requested-With': 'XMLHttpRequest' }
+                });
+                const result = await response.json();
+
+                if (!result.success) {
+                    alert(result.message);
+                    if (button) button.disabled = false;
+                    return;
+                }
+
+                window.location.href = 'admin_dashboard.php?section=' + (result.section || 'dashboard');
+            } catch (error) {
+                alert('Request failed. Please try again.');
+                if (button) button.disabled = false;
+            }
+        });
+    });
+</script>
 </html>
