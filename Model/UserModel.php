@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 
 class UserModel
@@ -133,4 +131,4 @@ class UserModel
         ];
     }
 }
->>>>>>> Stashed changes
+

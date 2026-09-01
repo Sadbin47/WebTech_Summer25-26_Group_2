@@ -1,5 +1,3 @@
-<<<<<<< Updated upstream
-=======
 <?php
 
 class Database
@@ -345,4 +343,4 @@ private function createDefaultManager(PDO $connection): void
         }
     }
 }
->>>>>>> Stashed changes
+
