@@ -13,7 +13,6 @@ require_once __DIR__ . '/../Model/UserModel.php';
 
 $userModel = new UserModel((new Database())->connect());
 $users = $userModel->getAllUsers();
-$settings = $userModel->getSettings();
 $revenue = $userModel->getRevenueSummary();
 $admin = $userModel->findById((int) $_SESSION['user_id']);
 $adminName = htmlspecialchars($_SESSION['name'] ?? 'Admin');
@@ -202,12 +201,6 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
         <?php else: ?>
             <div class="settings-grid">
                 <section class="panel sub-panel">
-                    <h2>System Settings</h2>
-                    <form method="POST" action="../Controller/AdminController.php">
-                        <input type="hidden" name="action" value="save_settings"><label for="tax_rate">Tax Rate (%)</label><input id="tax_rate" type="number" name="tax_rate" min="0" max="100" step="0.01" value="<?php echo htmlspecialchars($settings['tax_rate']); ?>"><label for="shipping_zone">Shipping Zone</label><select id="shipping_zone" name="shipping_zone"><option value="Inside Dhaka" <?php echo $settings['shipping_zone'] === 'Inside Dhaka' ? 'selected' : ''; ?>>Inside Dhaka</option><option value="Outside Dhaka" <?php echo $settings['shipping_zone'] === 'Outside Dhaka' ? 'selected' : ''; ?>>Outside Dhaka</option></select><button type="submit">Save Settings</button>
-                    </form>
-                </section>
-                <section class="panel sub-panel">
                     <h2>Edit Profile</h2><div class="profile-info"><strong><?php echo htmlspecialchars($admin['name'] ?? 'Admin'); ?></strong><br>Username: <?php echo htmlspecialchars($admin['username'] ?? 'admin'); ?><br>Role: Admin</div>
                     <form method="POST" action="../Controller/AdminController.php"><input type="hidden" name="action" value="update_profile"><label for="profile_name">Full Name</label><input id="profile_name" name="name" value="<?php echo htmlspecialchars($admin['name'] ?? ''); ?>" required><label for="profile_username">Username</label><input id="profile_username" name="username" value="<?php echo htmlspecialchars($admin['username'] ?? ''); ?>" required><button type="submit">Save Profile</button></form>
                 </section>
@@ -239,7 +232,9 @@ unset($_SESSION['admin_message'], $_SESSION['admin_error']);
             data.append('ajax', '1');
 
             try {
-                const response = await fetch(form.action, {
+                // The hidden `action` field shadows the form.action DOM property.
+                // Read the HTML attribute explicitly so the request targets the controller.
+                const response = await fetch(form.getAttribute('action'), {
                     method: 'POST',
                     body: data,
                     headers: { 'X-Requested-With': 'XMLHttpRequest' }
